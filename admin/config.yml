@@ -1,6 +1,6 @@
 backend:
   name: github
-  repo: TU_USUARIO/productora-web-v2
+  repo: lucianogarzo/productora-web-v2
   branch: main
   auth_type: pkce
 
