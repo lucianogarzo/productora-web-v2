@@ -51,7 +51,7 @@
 
       function render() {
         grid.innerHTML = projects.map(p => `
-          <a class="card" href="/project.html?slug=${encodeURIComponent(p.slug)}">
+          <a class="card" href="/project?slug=${encodeURIComponent(p.slug)}">
             <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy" />
             <div class="meta">
               <h3>${titleFor(p)}</h3>
