@@ -1,0 +1,17 @@
+backend:
+  name: github
+  repo: TU_USUARIO/productora-web-v2
+  branch: main
+  auth_type: pkce
+
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+collections:
+  - name: "projects"
+    label: "Projects"
+    folder: "content/projects"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
