@@ -74,7 +74,7 @@
 
         const id = vimeoId(project.vimeo_url);
         document.getElementById("video").innerHTML = id
-          ? `<iframe src="https://player.vimeo.com/video/${id}?autoplay=1&muted=0&title=0&byline=0&portrait=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`
+          ? `<iframe src="https://player.vimeo.com/video/${id}?autoplay=1&muted=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`
           : `<div style="padding:24px;opacity:.7">No video URL</div>`;
       }
 
