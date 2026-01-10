@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Project</title>
+    <style>
+      body { margin: 0; font-family: system-ui, -apple-system, Arial; background: #000; color: #fff; }
+      header { padding: 24px; display:flex; justify-content:space-between; align-items:center; }
+      a { color: #fff; text-decoration: none; opacity:.9; }
+      a:hover { opacity: 1; }
+      .lang { border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:#fff; padding:8px 10px; border-radius:10px; cursor:pointer; }
+      .wrap { padding: 0 24px 40px; max-width: 1100px; margin: 0 auto; }
+      .title { font-size: 34px; margin: 8px 0 10px; }
+      .sub { opacity:.75; margin: 0 0 20px; }
+      .video { aspect-ratio: 16/9; width: 100%; background:#111; border-radius:16px; overflow:hidden; }
+      iframe { width:100%; height:100%; border:0; }
+      .desc { margin-top: 22px; opacity:.9; line-height:1.5; white-space: pre-wrap; }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <a href="/projects.html">← Projects</a>
+      <button class="lang" id="langBtn">ES</button>
+    </header>
+
+    <div class="wrap">
+      <h1 class="title" id="title"></h1>
+      <p class="sub" id="sub"></p>
+
+      <div class="video" id="video"></div>
+
+      <div class="desc" id="desc"></div>
+    </div>
+
+    <script type="module">
+      import { fetchProjectBySlug } from "./js/sanity.js";
+
+      const langBtn = document.getElementById("langBtn");
+      let lang = localStorage.getItem("lang") || "es";
+      langBtn.textContent = lang.toUpperCase();
+
+      langBtn.addEventListener("click", () => {
+        lang = lang === "es" ? "en" : "es";
+        localStorage.setItem("lang", lang);
+        langBtn.textContent = lang.toUpperCase();
+        render();
+      });
+
+      const params = new URLSearchParams(location.search);
+      const slug = params.get("slug");
+
+      let project = null;
+
+      function titleFor(p) {
+        return lang === "es" ? p.title_es : p.title_en;
+      }
+      function descFor(p) {
+        return lang === "es" ? p.description_es : p.description_en;
+      }
+
+      function vimeoId(url) {
+        if (!url) return null;
+        const m = url.match(/vimeo\.com\/(\d+)/);
+        return m ? m[1] : null;
+      }
+
+      function render() {
+        if (!project) return;
+        document.getElementById("title").textContent = titleFor(project);
+        document.getElementById("sub").textContent = [project.client, project.year].filter(Boolean).join(" • ");
+        document.getElementById("desc").textContent = descFor(project) || "";
+
+        const id = vimeoId(project.vimeo_url);
+        document.getElementById("video").innerHTML = id
+          ? `<iframe src="https://player.vimeo.com/video/${id}?autoplay=1&muted=0&title=0&byline=0&portrait=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`
+          : `<div style="padding:24px;opacity:.7">No video URL</div>`;
+      }
+
+      (async () => {
+        project = await fetchProjectBySlug(slug);
+        if (!project) {
+          document.getElementById("title").textContent = "Project not found";
+          return;
+        }
+        render();
+      })();
+    </script>
+  </body>
+</html>
