@@ -22,7 +22,7 @@
 
   <body>
     <header>
-      <a href="/projects.html">← Projects</a>
+      <a href="/projects">← Projects</a>
       <button class="lang" id="langBtn">ES</button>
     </header>
 
@@ -36,7 +36,7 @@
     </div>
 
     <script type="module">
-      import { fetchProjectBySlug } from "./js/sanity.js";
+      import { fetchProjectBySlug } from "../js/sanity.js";
 
       const langBtn = document.getElementById("langBtn");
       let lang = localStorage.getItem("lang") || "es";
