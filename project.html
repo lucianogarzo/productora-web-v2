@@ -70,10 +70,15 @@
         if (!project) return;
       const id = "1151770949";
         
-        document.getElementById("debug").textContent =
-    `vimeo_url=${project.vimeo_url} | id=${id}`;
-          ? `<iframe src="https://player.vimeo.com/video/${id}?autoplay=1&muted=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`
-          : `<div style="padding:24px;opacity:.7">No video URL</div>`;
+      document.getElementById("video").innerHTML = `
+  <iframe
+    src="https://player.vimeo.com/video/1151770949?h=0&autoplay=0&muted=0&title=0&byline=0&portrait=0"
+    style="width:100%;height:100%;"
+    frameborder="0"
+    allow="autoplay; fullscreen; picture-in-picture"
+    allowfullscreen
+  ></iframe>
+`;;
       }
 
       (async () => {
