@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Projects</title>
+    <style>
+      body { margin: 0; font-family: system-ui, -apple-system, Arial; background: #000; color: #fff; }
+      header { padding: 24px; display:flex; justify-content:space-between; align-items:center; }
+      a { color: #fff; text-decoration: none; opacity:.9; }
+      a:hover { opacity: 1; }
+      .grid { display:grid; gap:14px; padding: 24px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+      .card { position:relative; border-radius:14px; overflow:hidden; background:#111; }
+      .card img { width:100%; height: 260px; object-fit:cover; display:block; opacity:.9; }
+      .meta { position:absolute; left:0; right:0; bottom:0; padding:14px; background: linear-gradient(to top, rgba(0,0,0,.8), rgba(0,0,0,0)); }
+      .meta h3 { margin:0; font-size: 16px; }
+      .meta p { margin:6px 0 0; opacity:.75; font-size: 13px; }
+      .lang { border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:#fff; padding:8px 10px; border-radius:10px; cursor:pointer; }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <a href="/">← Home</a>
+      <button class="lang" id="langBtn">ES</button>
+    </header>
+
+    <main class="grid" id="grid"></main>
+
+    <script type="module">
+      import { fetchProjects } from "./js/sanity.js";
+
+      const langBtn = document.getElementById("langBtn");
+      const grid = document.getElementById("grid");
+
+      let lang = localStorage.getItem("lang") || "es";
+      langBtn.textContent = lang.toUpperCase();
+
+      langBtn.addEventListener("click", () => {
+        lang = lang === "es" ? "en" : "es";
+        localStorage.setItem("lang", lang);
+        langBtn.textContent = lang.toUpperCase();
+        render();
+      });
+
+      let projects = [];
+
+      function titleFor(p) {
+        return lang === "es" ? p.title_es : p.title_en;
+      }
+
+      function render() {
+        grid.innerHTML = projects.map(p => `
+          <a class="card" href="/project.html?slug=${encodeURIComponent(p.slug)}">
+            <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy" />
+            <div class="meta">
+              <h3>${titleFor(p)}</h3>
+              <p>${[p.client, p.year].filter(Boolean).join(" • ")}</p>
+            </div>
+          </a>
+        `).join("");
+      }
+
+      (async () => {
+        projects = await fetchProjects();
+        render();
+      })();
+    </script>
+  </body>
+</html>
