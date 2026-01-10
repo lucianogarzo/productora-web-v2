@@ -29,7 +29,6 @@
       <h1 class="title" id="title"></h1>
       <p class="sub" id="sub"></p>
 <p style="opacity:.7" id="debug"></p>
-
       <div class="video" id="video"></div>
 
       <div class="desc" id="desc"></div>
@@ -69,12 +68,10 @@
 
       function render() {
         if (!project) return;
-        document.getElementById("title").textContent = titleFor(project);
-        document.getElementById("sub").textContent = [project.client, project.year].filter(Boolean).join(" • ");
-        document.getElementById("desc").textContent = descFor(project) || "";
-
         const id = vimeoId(project.vimeo_url);
-        document.getElementById("video").innerHTML = id
+        
+        document.getElementById("debug").textContent =
+    `vimeo_url=${project.vimeo_url} | id=${id}`;
           ? `<iframe src="https://player.vimeo.com/video/${id}?autoplay=1&muted=1&title=0&byline=0&portrait=0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`
           : `<div style="padding:24px;opacity:.7">No video URL</div>`;
       }
