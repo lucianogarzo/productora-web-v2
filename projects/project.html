@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Project</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Arial, sans-serif;
+        background: #000;
+        color: #fff;
+      }
+
+      header {
+        padding: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      a {
+        color: #fff;
+        text-decoration: none;
+        opacity: 0.9;
+      }
+
+      a:hover {
+        opacity: 1;
+      }
+
+      .lang {
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+        padding: 8px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      .wrap {
+        padding: 0 24px 40px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .title {
+        font-size: 34px;
+        margin: 8px 0 10px;
+      }
+
+      .sub {
+        opacity: 0.75;
+        margin: 0 0 20px;
+      }
+
+      /* ✅ Video container - always has height */
+      .video {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%; /* 16:9 */
+        background: #111;
+        border-radius: 16px;
+        overflow: hidden;
+      }
+
+      .video iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      .desc {
+        margin-top: 22px;
+        opacity: 0.9;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
+      .notfound {
+        padding: 24px;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <a href="/projects">← Projects</a>
+      <button class="lang" id="langBtn">ES</button>
+    </header>
+
+    <div class="wrap">
+      <h1 class="title" id="title"></h1>
+      <p class="sub" id="sub"></p>
+
+      <div class="video" id="video"></div>
+
+      <div class="desc" id="desc"></div>
+    </div>
+
+    <script type="module">
+      import { fetchProjectBySlug } from "../js/sanity.js";
+
+      const langBtn = document.getElementById("langBtn");
+
+      let lang = localStorage.getItem("lang") || "es";
+      langBtn.textContent = lang.toUpperCase();
+
+      langBtn.addEventListener("click", () => {
+        lang = lang === "es" ? "en" : "es";
+        localStorage.setItem("lang", lang);
+        langBtn.textContent = lang.toUpperCase();
+        render();
+      });
+
+      // ✅ Slug from URL: /projects/<slug>
+      const pathParts = window.location.pathname.split("/").filter(Boolean);
+      const slug = pathParts[pathParts.length - 1];
+
+      let project = null;
+
+      function titleFor(p) {
+        return lang === "es" ? p.title_es : p.title_en;
+      }
+
+      function descFor(p) {
+        return lang === "es" ? p.description_es : p.description_en;
+      }
+
+      function vimeoId(url) {
+        if (!url) return null;
+        // match any vimeo numeric ID
+        const m = String(url).match(/\b(\d{6,12})\b/);
+        return m ? m[1] : null;
+      }
+
+      function render() {
+        if (!project) return;
+
+        document.getElementById("title").textContent = titleFor(project);
+        document.getElementById("sub").textContent = [project.client, project.year]
+          .filter(Boolean)
+          .join(" • ");
+
+        document.getElementById("desc").textContent = descFor(project) || "";
+
+        const id = vimeoId(project.vimeo_url);
+
+        document.getElementById("video").innerHTML = id
+          ? `<iframe
+                src="https://player.vimeo.com/video/${id}?autoplay=0&muted=0&title=0&byline=0&portrait=0"
+                allow="autoplay; fullscreen; picture-in-picture"
+                allowfullscreen
+             ></iframe>`
+          : `<div class="notfound">Vimeo URL inválida o sin ID.</div>`;
+      }
+
+      (async () => {
+        try {
+          project = await fetchProjectBySlug(slug);
+
+          if (!project) {
+            document.getElementById("title").textContent = "Project not found";
+            document.getElementById("video").innerHTML =
+              `<div class="notfound">No se encontró el proyecto con slug: ${slug}</div>`;
+            return;
+          }
+
+          // nicer browser title
+          document.title = `${project.title_es || project.title_en} – Productora Web`;
+
+          render();
+        } catch (err) {
+          console.error(err);
+          document.getElementById("title").textContent = "Error";
+          document.getElementById("video").innerHTML =
+            `<div class="notfound">Error cargando el proyecto (revisar CORS).</div>`;
+        }
+      })();
+    </script>
+  </body>
+</html>
