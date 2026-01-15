@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>About</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+
+<body>
+  <script type="module">
+    import { mountNav } from "/js/nav.js";
+    import { getLang } from "/js/site.js";
+    mountNav();
+
+    const lang = getLang();
+    const COPY = {
+      es: {
+        title: "About",
+        lead: "Somos una productora audiovisual con foco en estética cinematográfica y ejecución ágil.",
+        p1: "Hacemos comerciales, videoclips y contenido digital. Acompañamos desde la idea hasta la entrega final: dirección, producción, rodaje y postproducción.",
+        p2: "Nos interesa el detalle: luz, ritmo, sonido y color. Buscamos impacto visual, claridad narrativa y calidad técnica.",
+        servicesTitle: "Servicios",
+        services: [
+          "Dirección & Producción",
+          "Rodaje (crew completo)",
+          "Edición",
+          "Color grading",
+          "Sonido / música",
+          "Entrega para redes y medios",
+        ],
+        clientsTitle: "Clientes / Colaboraciones",
+        clientsHint: "Podés completar esto más adelante con nombres o logos."
+      },
+      en: {
+        title: "About",
+        lead: "We’re an audiovisual production studio focused on cinematic aesthetics and fast execution.",
+        p1: "We produce commercials, music videos and digital content. We support projects end-to-end: direction, production, shooting and post-production.",
+        p2: "We care about the details: lighting, rhythm, sound and color. Our goal is visual impact, narrative clarity and high technical quality.",
+        servicesTitle: "Services",
+        services: [
+          "Direction & Production",
+          "Full crew shooting",
+          "Editing",
+          "Color grading",
+          "Sound / music",
+          "Deliverables for social & broadcast",
+        ],
+        clientsTitle: "Clients / Collaborations",
+        clientsHint: "You can fill this later with names or logos."
+      }
+    };
+
+    const c = COPY[lang];
+    document.title = c.title + " – Productora";
+
+    document.getElementById("t").textContent = c.title;
+    document.getElementById("lead").textContent = c.lead;
+    document.getElementById("p1").textContent = c.p1;
+    document.getElementById("p2").textContent = c.p2;
+
+    document.getElementById("servicesTitle").textContent = c.servicesTitle;
+    document.getElementById("clientsTitle").textContent = c.clientsTitle;
+    document.getElementById("clientsHint").textContent = c.clientsHint;
+
+    const ul = document.getElementById("services");
+    ul.innerHTML = c.services.map(s => `<li>${s}</li>`).join("");
+  </script>
+
+  <main class="container">
+    <section class="section" style="padding-top:36px">
+      <h1 class="h1" id="t">About</h1>
+      <p class="p" id="lead"></p>
+
+      <div style="height:18px"></div>
+
+      <div class="card" style="padding:20px">
+        <p class="p" id="p1"></p>
+        <div style="height:10px"></div>
+        <p class="p" id="p2"></p>
+
+        <div style="height:22px"></div>
+
+        <h2 class="h2" id="servicesTitle">Servicios</h2>
+        <ul id="services" style="margin:10px 0 0; padding-left:18px; color:var(--muted)">
+          <!-- filled by JS -->
+        </ul>
+
+        <div style="height:22px"></div>
+
+        <h2 class="h2" id="clientsTitle">Clientes / Colaboraciones</h2>
+        <p class="p" id="clientsHint"></p>
+
+        <div style="height:14px"></div>
+
+        <!-- Placeholder for future logos/names -->
+        <div class="grid">
+          <div class="card" style="height:80px; display:flex; align-items:center; justify-content:center; color:var(--muted2)">LOGO</div>
+          <div class="card" style="height:80px; display:flex; align-items:center; justify-content:center; color:var(--muted2)">LOGO</div>
+          <div class="card" style="height:80px; display:flex; align-items:center; justify-content:center; color:var(--muted2)">LOGO</div>
+          <div class="card" style="height:80px; display:flex; align-items:center; justify-content:center; color:var(--muted2)">LOGO</div>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
