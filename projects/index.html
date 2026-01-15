@@ -4,75 +4,210 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Projects</title>
+    <link rel="stylesheet" href="/css/style.css" />
 
     <style>
-      body { margin: 0; font-family: system-ui, -apple-system, Arial; background: #000; color: #fff; }
-      header { padding: 24px; display:flex; justify-content:space-between; align-items:center; }
-      a { color: #fff; text-decoration: none; opacity:.9; }
-      a:hover { opacity: 1; }
-      .lang { border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); color:#fff; padding:8px 10px; border-radius:10px; cursor:pointer; }
+      /* small page-specific tweaks */
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 18px;
+        padding-top: 28px;
+      }
 
-      .grid { display:grid; gap:14px; padding: 24px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-      .card { position:relative; border-radius:14px; overflow:hidden; background:#111; cursor:pointer; }
-      .card img { width:100%; height: 260px; object-fit:cover; display:block; opacity:.9; }
-      .meta { position:absolute; left:0; right:0; bottom:0; padding:14px; background: linear-gradient(to top, rgba(0,0,0,.8), rgba(0,0,0,0)); }
-      .meta h3 { margin:0; font-size: 16px; }
-      .meta p { margin:6px 0 0; opacity:.75; font-size: 13px; }
+      .subtitle {
+        margin: 0;
+        color: var(--muted);
+        max-width: 80ch;
+      }
 
-      .wrap { padding: 0 24px 40px; max-width: 1100px; margin: 0 auto; }
-      .title { font-size: 34px; margin: 8px 0 10px; }
-      .sub { opacity:.75; margin: 0 0 20px; }
+      .filters {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+      }
 
-      .video { position: relative; width: 100%; padding-top: 56.25%; background:#111; border-radius:16px; overflow:hidden; }
-      .video iframe { position:absolute; inset:0; width:100%; height:100%; border:0; }
+      .pill {
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.05);
+        color: var(--fg);
+        padding: 8px 10px;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 13px;
+        opacity: 0.9;
+      }
+      .pill:hover { opacity: 1; }
+      .pill.active {
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.22);
+      }
 
-      .desc { margin-top: 22px; opacity:.9; line-height:1.5; white-space: pre-wrap; }
+      /* detail view */
+      .detail-wrap {
+        padding: 26px 0 54px;
+      }
 
-      /* View toggles */
-      .hidden { display:none; }
-      .back { display:inline-flex; align-items:center; gap:8px; }
+      .backline {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 10px 0 18px;
+      }
+
+      .back {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--fg);
+        opacity: 0.9;
+      }
+
+      .detail-title {
+        font-size: 36px;
+        margin: 8px 0 10px;
+        line-height: 1.05;
+      }
+
+      .detail-sub {
+        margin: 0 0 18px;
+        color: var(--muted);
+      }
+
+      .detail-video {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%;
+        background: #111;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+      }
+
+      .detail-video iframe {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      .detail-desc {
+        margin-top: 18px;
+        color: var(--muted);
+        line-height: 1.55;
+        white-space: pre-wrap;
+      }
+
+      .hidden { display: none; }
     </style>
   </head>
 
   <body>
-    <header>
-      <a href="/" class="back">← Home</a>
-      <button class="lang" id="langBtn">ES</button>
-    </header>
+    <script type="module">
+      import { mountNav } from "/js/nav.js";
+      mountNav();
+    </script>
 
-    <!-- LIST -->
-    <main id="listView" class="grid"></main>
+    <main class="container">
+      <!-- LIST VIEW -->
+      <section id="listView" class="section" style="padding-top: 36px">
+        <div class="top">
+          <div>
+            <h1 class="h1" id="pageTitle">Projects</h1>
+            <p class="subtitle" id="pageSubtitle">
+              Selección de trabajos. Dirección, producción y post.
+            </p>
+          </div>
 
-    <!-- DETAIL -->
-    <main id="detailView" class="hidden">
-      <div class="wrap">
-        <a href="/projects/" class="back" id="backBtn">← Projects</a>
-        <h1 class="title" id="title"></h1>
-        <p class="sub" id="sub"></p>
-        <div class="video" id="video"></div>
-        <div class="desc" id="desc"></div>
-      </div>
+          <div class="filters" id="filters"></div>
+        </div>
+
+        <div style="height: 18px"></div>
+
+        <div class="grid" id="grid"></div>
+      </section>
+
+      <!-- DETAIL VIEW -->
+      <section id="detailView" class="hidden detail-wrap">
+        <div class="backline">
+          <a class="back" href="/projects/" id="backBtn">← Projects</a>
+          <span style="color: var(--muted2); font-size: 13px" id="detailSlug"></span>
+        </div>
+
+        <h1 class="detail-title" id="detailTitle"></h1>
+        <p class="detail-sub" id="detailSub"></p>
+
+        <div class="detail-video" id="detailVideo"></div>
+
+        <div class="detail-desc" id="detailDesc"></div>
+      </section>
     </main>
 
     <script type="module">
-      import { fetchProjects, fetchProjectBySlug } from "../js/sanity.js";
+      import { getLang } from "/js/site.js";
+      import { fetchProjects, fetchProjectBySlug } from "/js/sanity.js";
 
-      const langBtn = document.getElementById("langBtn");
+      // --- language copy
+      const lang = getLang();
+
+      const COPY = {
+        es: {
+          title: "Projects",
+          subtitle: "Selección de trabajos. Dirección, producción y post.",
+          back: "← Projects",
+          notFoundTitle: "Project not found",
+          notFoundDesc: (slug) => `No se encontró el proyecto con slug: ${slug}`,
+          invalidVideo: "Vimeo URL inválida.",
+          filters: ["All", "Featured"],
+        },
+        en: {
+          title: "Projects",
+          subtitle: "Selected work. Direction, production and post.",
+          back: "← Projects",
+          notFoundTitle: "Project not found",
+          notFoundDesc: (slug) => `No project found for slug: ${slug}`,
+          invalidVideo: "Invalid Vimeo URL.",
+          filters: ["All", "Featured"],
+        },
+      };
+
+      const c = COPY[lang];
+
+      // --- dom
       const listView = document.getElementById("listView");
       const detailView = document.getElementById("detailView");
 
-      let lang = localStorage.getItem("lang") || "es";
-      langBtn.textContent = lang.toUpperCase();
+      const grid = document.getElementById("grid");
+      const filters = document.getElementById("filters");
 
-      langBtn.addEventListener("click", () => {
-        lang = lang === "es" ? "en" : "es";
-        localStorage.setItem("lang", lang);
-        langBtn.textContent = lang.toUpperCase();
-        route();
-      });
+      const pageTitle = document.getElementById("pageTitle");
+      const pageSubtitle = document.getElementById("pageSubtitle");
 
-      function titleFor(p) { return lang === "es" ? p.title_es : p.title_en; }
-      function descFor(p) { return lang === "es" ? p.description_es : p.description_en; }
+      const backBtn = document.getElementById("backBtn");
+      const detailSlug = document.getElementById("detailSlug");
+      const detailTitle = document.getElementById("detailTitle");
+      const detailSub = document.getElementById("detailSub");
+      const detailVideo = document.getElementById("detailVideo");
+      const detailDesc = document.getElementById("detailDesc");
+
+      pageTitle.textContent = c.title;
+      pageSubtitle.textContent = c.subtitle;
+      backBtn.textContent = c.back;
+
+      // --- state
+      let projects = [];
+      let filterMode = "all"; // all | featured
+
+      function titleFor(p) {
+        return lang === "es" ? p.title_es : p.title_en;
+      }
+
+      function descFor(p) {
+        return lang === "es" ? p.description_es : p.description_en;
+      }
 
       function vimeoId(url) {
         if (!url) return null;
@@ -80,54 +215,70 @@
         return m ? m[1] : null;
       }
 
-      let projects = [];
+      // --- render list
+      function renderFilters() {
+        filters.innerHTML = `
+          <button class="pill ${filterMode === "all" ? "active" : ""}" data-mode="all">${c.filters[0]}</button>
+          <button class="pill ${filterMode === "featured" ? "active" : ""}" data-mode="featured">${c.filters[1]}</button>
+        `;
+
+        filters.querySelectorAll(".pill").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            filterMode = btn.getAttribute("data-mode");
+            renderList();
+            renderFilters();
+          });
+        });
+      }
 
       function renderList() {
-        listView.innerHTML = projects.map(p => `
-          <div class="card" data-slug="${p.slug}">
+        const list = filterMode === "featured"
+          ? projects.filter((p) => p.featured)
+          : projects;
+
+        grid.innerHTML = list.map((p) => `
+          <a class="card" href="/projects/#/${encodeURIComponent(p.slug)}">
             <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy" />
             <div class="meta">
               <h3>${titleFor(p)}</h3>
               <p>${[p.client, p.year].filter(Boolean).join(" • ")}</p>
             </div>
-          </div>
+          </a>
         `).join("");
-
-        listView.querySelectorAll(".card").forEach(card => {
-          card.addEventListener("click", () => {
-            const slug = card.getAttribute("data-slug");
-            location.hash = `#/${slug}`;   // ✅ pro url without server routing
-          });
-        });
       }
 
+      // --- render detail
       async function renderDetail(slug) {
+        detailSlug.textContent = slug ? `/${slug}` : "";
         const project = await fetchProjectBySlug(slug);
 
         if (!project) {
-          document.getElementById("title").textContent = "Project not found";
-          document.getElementById("sub").textContent = "";
-          document.getElementById("video").innerHTML = "";
-          document.getElementById("desc").textContent = `No se encontró el proyecto con slug: ${slug}`;
+          detailTitle.textContent = c.notFoundTitle;
+          detailSub.textContent = "";
+          detailVideo.innerHTML = "";
+          detailDesc.textContent = c.notFoundDesc(slug);
+          document.title = `${c.notFoundTitle} – ${c.title}`;
           return;
         }
 
-        document.title = `${titleFor(project)} – Projects`;
+        const t = titleFor(project);
+        detailTitle.textContent = t;
+        detailSub.textContent = [project.client, project.year].filter(Boolean).join(" • ");
+        detailDesc.textContent = descFor(project) || "";
 
-        document.getElementById("title").textContent = titleFor(project);
-        document.getElementById("sub").textContent = [project.client, project.year].filter(Boolean).join(" • ");
-        document.getElementById("desc").textContent = descFor(project) || "";
+        document.title = `${t} – ${c.title}`;
 
         const id = vimeoId(project.vimeo_url);
-        document.getElementById("video").innerHTML = id
+        detailVideo.innerHTML = id
           ? `<iframe src="https://player.vimeo.com/video/${id}?autoplay=0&muted=0&title=0&byline=0&portrait=0"
                     allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`
-          : `<div style="padding:24px;opacity:.7">Vimeo URL inválida.</div>`;
+          : `<div style="padding:24px;opacity:.7">${c.invalidVideo}</div>`;
       }
 
       function showList() {
         detailView.classList.add("hidden");
         listView.classList.remove("hidden");
+        document.title = c.title;
       }
 
       function showDetail() {
@@ -135,27 +286,29 @@
         detailView.classList.remove("hidden");
       }
 
-      async function route() {
-        // hash example: #/parense-de-manos-2025
+      // --- router
+      function route() {
         const hash = location.hash || "";
         const m = hash.match(/^#\/(.+)$/);
 
         if (!m) {
           showList();
           renderList();
-          document.title = "Projects";
           return;
         }
 
-        const slug = m[1];
+        const slug = decodeURIComponent(m[1]);
         showDetail();
-        await renderDetail(slug);
+        renderDetail(slug);
       }
 
       window.addEventListener("hashchange", route);
 
+      // --- init
       (async () => {
+        renderFilters();
         projects = await fetchProjects();
+        renderList();
         route();
       })();
     </script>
