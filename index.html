@@ -1,12 +1,69 @@
 <!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Productora</title>
-  </head>
-  <body>
-    <h1>Productora Web</h1>
-    <p>OK</p>
-  </body>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Productora</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+
+<body>
+  <script type="module">
+    import { mountNav } from "/js/nav.js";
+    mountNav();
+  </script>
+
+  <main class="container">
+    <section class="hero">
+      <div class="hero-card">
+        <div class="hero-media">
+          <!-- ✅ acá después va el video reel -->
+          <div class="placeholder">REEL PLACEHOLDER</div>
+        </div>
+        <div class="hero-copy">
+          <h1 class="h1">Cine para marcas y artistas.</h1>
+          <p class="p">Dirección, producción y post. Una estética cinematográfica con ejecución ágil.</p>
+
+          <div style="height:14px"></div>
+          <div class="kpi">
+            <span>Commercials</span>
+            <span>Videoclips</span>
+            <span>Documentales</span>
+            <span>Post</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="h2">Featured</h2>
+      <div class="grid" id="featuredGrid"></div>
+    </section>
+  </main>
+
+  <script type="module">
+    import { getLang } from "/js/site.js";
+    import { fetchProjects } from "/js/sanity.js";
+
+    const lang = getLang();
+    const featuredGrid = document.getElementById("featuredGrid");
+
+    function titleFor(p){ return lang === "es" ? p.title_es : p.title_en; }
+
+    (async () => {
+      const projects = await fetchProjects();
+      const featured = projects.filter(p => p.featured).slice(0, 6);
+
+      featuredGrid.innerHTML = featured.map(p => `
+        <a class="card" href="/projects/#/${encodeURIComponent(p.slug)}">
+          <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy"/>
+          <div class="meta">
+            <h3>${titleFor(p)}</h3>
+            <p>${[p.client, p.year].filter(Boolean).join(" • ")}</p>
+          </div>
+        </a>
+      `).join("");
+    })();
+  </script>
+</body>
 </html>
-<a href="/projects">Projects</a>
