@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Contact</title>
+  <link rel="stylesheet" href="/css/style.css"/>
+</head>
+
+<body>
+  <script type="module">
+    import { mountNav } from "/js/nav.js";
+    import { getLang } from "/js/site.js";
+    mountNav();
+
+    const lang = getLang();
+    const COPY = {
+      es: {
+        title: "Contact",
+        lead: "Contanos qué querés hacer. Respondemos rápido.",
+        cta: "Escribinos",
+        email: "Email",
+        instagram: "Instagram",
+        whatsapp: "WhatsApp",
+        hint: "Podés reemplazar estos links con los tuyos cuando quieras."
+      },
+      en: {
+        title: "Contact",
+        lead: "Tell us what you want to create. We reply fast.",
+        cta: "Reach out",
+        email: "Email",
+        instagram: "Instagram",
+        whatsapp: "WhatsApp",
+        hint: "You can replace these links with your own anytime."
+      }
+    };
+
+    const c = COPY[lang];
+    document.title = c.title + " – Productora";
+
+    document.getElementById("t").textContent = c.title;
+    document.getElementById("lead").textContent = c.lead;
+    document.getElementById("cta").textContent = c.cta;
+    document.getElementById("hint").textContent = c.hint;
+
+    document.getElementById("emailLabel").textContent = c.email;
+    document.getElementById("igLabel").textContent = c.instagram;
+    document.getElementById("waLabel").textContent = c.whatsapp;
+  </script>
+
+  <main class="container">
+    <section class="section" style="padding-top:36px">
+      <h1 class="h1" id="t">Contact</h1>
+      <p class="p" id="lead"></p>
+
+      <div style="height:18px"></div>
+
+      <div class="card" style="padding:20px">
+        <h2 class="h2" id="cta">Escribinos</h2>
+        <p class="p" id="hint"></p>
+
+        <div style="height:18px"></div>
+
+        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
+          <a class="card" style="padding:18px" href="mailto:hola@tuproductora.com">
+            <div style="color:var(--muted2); font-size:12px; letter-spacing:.16em; text-transform:uppercase" id="emailLabel">Email</div>
+            <div style="margin-top:8px; font-size:16px">hola@tuproductora.com</div>
+          </a>
+
+          <a class="card" style="padding:18px" href="https://instagram.com/" target="_blank" rel="noreferrer">
+            <div style="color:var(--muted2); font-size:12px; letter-spacing:.16em; text-transform:uppercase" id="igLabel">Instagram</div>
+            <div style="margin-top:8px; font-size:16px">@tuusuario</div>
+          </a>
+
+          <a class="card" style="padding:18px" href="https://wa.me/5490000000000" target="_blank" rel="noreferrer">
+            <div style="color:var(--muted2); font-size:12px; letter-spacing:.16em; text-transform:uppercase" id="waLabel">WhatsApp</div>
+            <div style="margin-top:8px; font-size:16px">+54 9 ...</div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
