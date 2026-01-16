@@ -118,6 +118,28 @@
 
       .hidden {
         display: none;
+        
+      .video-loading{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color: rgba(255,255,255,.65);
+  font-size:12px;
+  letter-spacing:.18em;
+  text-transform: uppercase;
+  background: radial-gradient(circle at 50% 50%, rgba(255,255,255,.06), rgba(0,0,0,.65));
+}
+
+.fade-in{
+  animation: fadeIn .45s ease both;
+}
+@keyframes fadeIn{
+  from{ opacity:0; transform: translateY(6px); filter: blur(6px); }
+  to{ opacity:1; transform: translateY(0); filter: blur(0); }
+}
+
       }
     </style>
   </head>
