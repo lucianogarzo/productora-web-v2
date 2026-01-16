@@ -209,7 +209,7 @@
         return lang === "es" ? p.description_es : p.description_en;
       }
 
-  function vimeoId(url) {
+function vimeoId(url) {
   if (!url) return null;
   const m = String(url).match(/\b(\d{6,12})\b/);
   return m ? m[1] : null;
@@ -218,6 +218,43 @@
 function youtubeId(url) {
   if (!url) return null;
   const s = String(url);
+
+  const patterns = [
+    /youtube\.com\/watch\?v=([^&]+)/,
+    /youtu\.be\/([^?&]+)/,
+    /youtube\.com\/embed\/([^?&]+)/,
+    /youtube\.com\/shorts\/([^?&]+)/,
+  ];
+
+  for (const p of patterns) {
+    const m = s.match(p);
+    if (m && m[1]) return m[1];
+  }
+  return null;
+}
+
+function videoEmbedHTML(url) {
+  const yt = youtubeId(url);
+  if (yt) {
+    return `<iframe
+      src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=0&mute=0&controls=1&modestbranding=1&rel=0"
+      allow="autoplay; fullscreen; picture-in-picture"
+      allowfullscreen
+    ></iframe>`;
+  }
+
+  const vm = vimeoId(url);
+  if (vm) {
+    return `<iframe
+      src="https://player.vimeo.com/video/${vm}?autoplay=0&muted=0&title=0&byline=0&portrait=0"
+      allow="autoplay; fullscreen; picture-in-picture"
+      allowfullscreen
+    ></iframe>`;
+  }
+
+  return null;
+}
+
 
   // Examples handled:
   // https://www.youtube.com/watch?v=VIDEOID
