@@ -43,6 +43,10 @@ const detailSub = document.getElementById("detailSub");
 const detailVideo = document.getElementById("detailVideo");
 const detailDesc = document.getElementById("detailDesc");
 const gallery = document.getElementById("gallery");
+const lightbox = document.getElementById("lightbox");
+const lightboxImg = document.getElementById("lightboxImg");
+const lightboxClose = document.getElementById("lightboxClose");
+
 
 
 pageTitle.textContent = c.title;
@@ -166,8 +170,12 @@ async function renderDetail(slug) {
 const imgs = project.gallery || [];
 if (gallery) {
   gallery.innerHTML = imgs.length
-    ? imgs.map(url => `<img src="${url}" loading="lazy" alt="">`).join("")
+    ? imgs.map(url => `<img src="${url}" loading="lazy" alt="" data-full="${url}">`).join("")
     : "";
+
+  gallery.querySelectorAll("img[data-full]").forEach(img => {
+    img.addEventListener("click", () => openLightbox(img.dataset.full));
+  });
 }
 
   // reset detail content
@@ -244,6 +252,31 @@ function route() {
 }
 
 window.addEventListener("hashchange", route);
+function openLightbox(url) {
+  if (!lightbox || !lightboxImg) return;
+  lightboxImg.src = url;
+  lightbox.classList.remove("hidden");
+  lightbox.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+}
+
+function closeLightbox() {
+  if (!lightbox || !lightboxImg) return;
+  lightbox.classList.add("hidden");
+  lightbox.setAttribute("aria-hidden", "true");
+  lightboxImg.src = "";
+  document.body.style.overflow = "";
+}
+
+if (lightboxClose) lightboxClose.addEventListener("click", closeLightbox);
+if (lightbox) {
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+}
+window.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") closeLightbox();
+});
 
 /* -----------------------------
    Init
