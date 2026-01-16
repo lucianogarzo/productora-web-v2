@@ -108,6 +108,11 @@
   <body>
     <script type="module">
       import { mountNav } from "/js/nav.js";
+      const grid = document.getElementById("grid");
+grid.innerHTML = `<div style="opacity:.7;padding:18px;border:1px solid rgba(255,255,255,.15);border-radius:14px">
+Loading projects...
+</div>`;
+
       mountNav();
     </script>
 
@@ -403,11 +408,28 @@ detailVideo.innerHTML = embed
       window.addEventListener("hashchange", route);
 
       // --- init
-      (async () => {
-        renderFilters();
-        projects = await fetchProjects();
-        renderList();
-        route();
+ (async () => {
+  try {
+    renderFilters();
+    projects = await fetchProjects();
+
+    if (!projects || projects.length === 0) {
+      grid.innerHTML = `<div style="opacity:.7;padding:18px;border:1px solid rgba(255,255,255,.15);border-radius:14px">
+No projects found (Sanity returned 0 results).
+</div>`;
+      return;
+    }
+
+    renderList();
+    route();
+  } catch (e) {
+    console.error(e);
+    grid.innerHTML = `<div style="opacity:.7;padding:18px;border:1px solid rgba(255,255,255,.15);border-radius:14px">
+Error loading projects: ${e?.message || e}
+</div>`;
+  }
+})();
+
       })();
     </script>
   </body>
