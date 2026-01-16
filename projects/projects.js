@@ -155,14 +155,14 @@ async function renderDetail(slug) {
     ? embed
     : `<div style="padding:24px;opacity:.7">${c.invalidVideo}</div>`;
 
-  // gallery (simple grid)
-  const imgs = Array.isArray(project.gallery) ? project.gallery.filter(Boolean) : [];
-  if (gallery && imgs.length) {
-    gallery.innerHTML = imgs
-      .map(url => `<img src="${url}" loading="lazy" alt="">`)
-      .join("");
-  }
+// gallery (simple grid)
+const imgs = Array.isArray(project.gallery) ? project.gallery.filter(Boolean) : [];
+if (gallery) {
+  gallery.innerHTML = imgs.length
+    ? imgs.map(url => `<img src="${url}" loading="lazy" alt="">`).join("")
+    : "";
 }
+
 
 function showList() {
   detailView.classList.add("hidden");
