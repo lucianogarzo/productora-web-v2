@@ -362,11 +362,13 @@ function videoEmbedHTML(url) {
 
         document.title = `${t} – ${c.title}`;
 
- const embed = videoEmbedHTML(project.vimeo_url);
+const url = project?.vimeo_url;
+const embed = videoEmbedHTML(url);
 
 detailVideo.innerHTML = embed
   ? embed
-  : `<div style="padding:24px;opacity:.7">Video URL inválida (YouTube/Vimeo).</div>`;
+  : `<div style="padding:24px;opacity:.7">No video embed</div>`;
+
 
 
       }
