@@ -26,6 +26,7 @@ const COPY = {
 
 const c = COPY[lang];
 
+// --- dom
 const listView = document.getElementById("listView");
 const detailView = document.getElementById("detailView");
 
@@ -46,17 +47,21 @@ pageTitle.textContent = c.title;
 pageSubtitle.textContent = c.subtitle;
 backBtn.textContent = c.back;
 
+// --- state
 let projects = [];
-let filterMode = "all";
+let filterMode = "all"; // all | featured
 
 function titleFor(p) {
   return lang === "es" ? p.title_es : p.title_en;
 }
+
 function descFor(p) {
   return lang === "es" ? p.description_es : p.description_en;
 }
 
-/* Video helpers (YouTube + Vimeo) */
+/* -----------------------------
+   Video helpers (YouTube+Vimeo)
+------------------------------ */
 function vimeoId(url) {
   if (!url) return null;
   const m = String(url).match(/\b(\d{6,12})\b/);
@@ -65,16 +70,21 @@ function vimeoId(url) {
 
 function youtubeId(url) {
   if (!url) return null;
+
   try {
     const u = new URL(url);
 
+    // youtu.be/<id>
     if (u.hostname.includes("youtu.be")) {
       return u.pathname.replace("/", "");
     }
+
+    // youtube.com/watch?v=<id>
     if (u.searchParams.get("v")) {
       return u.searchParams.get("v");
     }
 
+    // youtube.com/embed/<id> or /shorts/<id>
     const parts = u.pathname.split("/");
     return parts.pop() || null;
   } catch (e) {
@@ -104,7 +114,9 @@ function videoEmbedHTML(url) {
   return null;
 }
 
-/* Render */
+/* -----------------------------
+   Render list
+------------------------------ */
 function renderFilters() {
   filters.innerHTML = `
     <button class="pill ${filterMode === "all" ? "active" : ""}" data-mode="all">${c.filters[0]}</button>
@@ -136,16 +148,37 @@ function renderList() {
   `).join("");
 }
 
+/* -----------------------------
+   Render detail (Loader + fade)
+------------------------------ */
+function resetDetailAnimations() {
+  detailTitle.classList.remove("fade-in");
+  detailSub.classList.remove("fade-in");
+  detailDesc.classList.remove("fade-in");
+}
+
 async function renderDetail(slug) {
+  resetDetailAnimations();
+
+  // reset detail content
   detailSlug.textContent = slug ? `/${slug}` : "";
+  detailTitle.textContent = "";
+  detailSub.textContent = "";
+  detailDesc.textContent = "";
+
+  // reset video area (restore loader)
+  detailVideo.innerHTML = `<div class="video-loading" id="videoLoading">Loading…</div>`;
+
   const project = await fetchProjectBySlug(slug);
 
   if (!project) {
     detailTitle.textContent = c.notFoundTitle;
-    detailSub.textContent = "";
     detailVideo.innerHTML = "";
     detailDesc.textContent = c.notFoundDesc(slug);
     document.title = `${c.notFoundTitle} – ${c.title}`;
+
+    detailTitle.classList.add("fade-in");
+    detailDesc.classList.add("fade-in");
     return;
   }
 
@@ -153,15 +186,27 @@ async function renderDetail(slug) {
   detailTitle.textContent = t;
   detailSub.textContent = [project.client, project.year].filter(Boolean).join(" • ");
   detailDesc.textContent = descFor(project) || "";
-
   document.title = `${t} – ${c.title}`;
 
   const embed = videoEmbedHTML(project.vimeo_url);
-  detailVideo.innerHTML = embed
-    ? embed
-    : `<div style="padding:24px;opacity:.7">${c.invalidVideo}</div>`;
+
+  if (embed) {
+    detailVideo.insertAdjacentHTML("afterbegin", embed);
+    const loader = document.getElementById("videoLoading");
+    if (loader) loader.style.display = "none";
+  } else {
+    detailVideo.innerHTML = `<div style="padding:24px;opacity:.7">${c.invalidVideo}</div>`;
+  }
+
+  // fade-in text
+  detailTitle.classList.add("fade-in");
+  detailSub.classList.add("fade-in");
+  detailDesc.classList.add("fade-in");
 }
 
+/* -----------------------------
+   Views + router
+------------------------------ */
 function showList() {
   detailView.classList.add("hidden");
   listView.classList.remove("hidden");
@@ -190,6 +235,9 @@ function route() {
 
 window.addEventListener("hashchange", route);
 
+/* -----------------------------
+   Init
+------------------------------ */
 (async () => {
   renderFilters();
   projects = await fetchProjects();
