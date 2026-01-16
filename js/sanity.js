@@ -47,9 +47,7 @@ export async function fetchProjectBySlug(slug) {
       description_es, description_en,
       featured, order,
       "thumbnail": thumbnail.asset->url,
-      "gallery": gallery[]{ "url": asset->url }
-
+      "gallery": gallery[].asset->url
     }
-  `;
   return sanityFetch(query, { slug });
 }
