@@ -94,19 +94,45 @@ a:hover{opacity:1}
   gap:14px;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
 }
+/* --- Cinematic cards --- */
 .card{
-  border-radius: 16px;
-  overflow:hidden;
-  border:1px solid var(--line);
-  background:var(--card);
-  position:relative;
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.02);
+  transform: translateZ(0);
 }
+
 .card img{
-  width:100%;
-  height:260px;
-  object-fit:cover;
+  width: 100%;
+  height: 100%;
   display:block;
-  opacity:.92;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  transition: transform .6s cubic-bezier(.2,.8,.2,1), opacity .6s;
+  opacity: .92;
+}
+
+.card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.08) 55%, rgba(0,0,0,0));
+  opacity: .9;
+  transition: opacity .6s;
+  pointer-events:none;
+}
+
+.card:hover img{
+  transform: scale(1.06);
+  opacity: 1;
+}
+
+.card:hover::after{
+  opacity: 1;
+}
+
 }
 .card .meta{
   position:absolute;left:0;right:0;bottom:0;
@@ -133,6 +159,33 @@ body::before{
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
   background-size: 180px 180px;
+}
+
+  .card .meta{
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  z-index: 2;
+  transform: translateY(6px);
+  transition: transform .6s cubic-bezier(.2,.8,.2,1);
+}
+
+.card .meta h3{
+  margin:0;
+  font-size: 18px;
+  line-height: 1.05;
+  font-weight: 600;
+}
+
+.card .meta p{
+  margin:8px 0 0;
+  color: rgba(255,255,255,.72);
+  font-size: 13px;
+}
+
+.card:hover .meta{
+  transform: translateY(0);
 }
 
 }
