@@ -164,6 +164,47 @@
   transform: scale(1.01);
   opacity: 1;
 }
+        /* Lightbox */
+.lightbox{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.92);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 18px;
+  z-index: 99999;
+}
+
+.lightbox.hidden{
+  display:none;
+}
+
+.lightbox-img{
+  max-width: min(1100px, 96vw);
+  max-height: 86vh;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.14);
+  object-fit: contain;
+}
+
+.lightbox-close{
+  position:absolute;
+  top: 16px;
+  right: 16px;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(255,255,255,.08);
+  color: rgba(255,255,255,.92);
+  cursor:pointer;
+  font-size: 16px;
+}
+.lightbox-close:hover{
+  background: rgba(255,255,255,.14);
+}
+
 
       }
     </style>
@@ -210,6 +251,12 @@
         <div class="detail-desc" id="detailDesc"></div>
       </section>
     </main>
+    
+<!-- LIGHTBOX -->
+<div class="lightbox hidden" id="lightbox" aria-hidden="true">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+  <img class="lightbox-img" id="lightboxImg" alt="" />
+</div>
 
     <!-- ✅ main logic (external JS) -->
     <script type="module" src="/projects/projects.js"></script>
