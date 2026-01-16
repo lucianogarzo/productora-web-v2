@@ -113,10 +113,11 @@
   </head>
 
   <body>
-    <script type="module">
-      import { mountNav } from "/js/nav.js";
-      mountNav();
-    </script>
+   <script type="module">
+  import { mountNav } from "../js/nav.js";
+  mountNav();
+</script>
+
 
     <main class="container">
       <!-- LIST VIEW -->
@@ -154,8 +155,9 @@
     </main>
 
     <script type="module">
-      import { getLang } from "/js/site.js";
-      import { fetchProjects, fetchProjectBySlug } from "/js/sanity.js";
+      import { getLang } from "../js/site.js";
+import { fetchProjects, fetchProjectBySlug } from "../js/sanity.js";
+
 
       // --- language copy
       const lang = getLang();
