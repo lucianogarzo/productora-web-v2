@@ -3,90 +3,334 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Contact</title>
+  <title>Contact – Calabria</title>
   <link rel="stylesheet" href="/css/style.css"/>
-  <meta name="description" content="Portfolio de proyectos audiovisuales." />
-  <meta name="robots" content="index,follow" />
 
-<link rel="icon" href="/assets/favicon.png" />
-<meta property="og:image" content="https://productora-web-v2.pages.dev/assets/og.jpg" />
-<meta property="og:url" content="https://www.bycalabria.com/contact.html" />
-<link rel="canonical" href="https://www.bycalabria.com/contact.html" />
+  <meta name="description" content="Contacto – Calabria. Dirección, producción y post." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Contact – Calabria" />
+  <meta property="og:description" content="Hablemos. Dirección, producción y post." />
+  <meta property="og:image" content="https://productora-web-v2.pages.dev/assets/og.jpg" />
+  <meta property="og:url" content="https://productora-web-v2.pages.dev/contact.html" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="/assets/favicon.png" />
+  <link rel="canonical" href="https://www.bycalabria.com/contact.html" />
 
+  <style>
+    .contact-wrap{
+      padding-top: 38px;
+      padding-bottom: 64px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 22px;
+    }
+
+    @media (max-width: 900px){
+      .contact-wrap{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      overflow:hidden;
+    }
+
+    .panel-inner{
+      padding: 20px;
+    }
+
+    .kicker{
+      font-size: 12px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin-bottom: 10px;
+    }
+
+    .big-title{
+      margin: 0 0 10px;
+      font-size: 46px;
+      line-height: 1.02;
+    }
+
+    .lead{
+      margin: 0;
+      color: var(--muted);
+      max-width: 70ch;
+      line-height: 1.5;
+    }
+
+    .grid-actions{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    @media (max-width: 520px){
+      .grid-actions{ grid-template-columns: 1fr; }
+    }
+
+    .action{
+      display:flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.25);
+      cursor: pointer;
+      transition: transform .25s ease, background .25s ease, border-color .25s ease;
+    }
+    .action:hover{
+      transform: translateY(-2px);
+      background: rgba(255,255,255,.06);
+      border-color: rgba(255,255,255,.2);
+    }
+
+    .action .label{
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted2);
+    }
+    .action .value{
+      font-size: 16px;
+      color: var(--fg);
+    }
+    .action .hint{
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .btnrow{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.2);
+      background: rgba(255,255,255,.08);
+      color: var(--fg);
+      cursor:pointer;
+      font-size: 14px;
+      opacity: .95;
+      white-space: nowrap;
+    }
+    .btn:hover{ opacity:1; background: rgba(255,255,255,.12); }
+
+    .btn.primary{
+      background: rgba(255,255,255,.18);
+      border-color: rgba(255,255,255,.28);
+    }
+
+    .note{
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .mini{
+      font-size: 12px;
+      color: var(--muted2);
+    }
+
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(10,10,10,.9);
+      color: rgba(255,255,255,.9);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .25s ease;
+      z-index: 99999;
+    }
+    .toast.show{ opacity: 1; }
+  </style>
 </head>
 
 <body>
   <script type="module">
     import { mountNav } from "/js/nav.js";
-    import { getLang } from "/js/site.js";
     mountNav();
-
-    const lang = getLang();
-    const COPY = {
-      es: {
-        title: "Contact",
-        lead: "Contanos qué querés hacer. Respondemos rápido.",
-        cta: "Escribinos",
-        email: "Email",
-        instagram: "Instagram",
-        whatsapp: "WhatsApp",
-        hint: "Podés reemplazar estos links con los tuyos cuando quieras."
-      },
-      en: {
-        title: "Contact",
-        lead: "Tell us what you want to create. We reply fast.",
-        cta: "Reach out",
-        email: "Email",
-        instagram: "Instagram",
-        whatsapp: "WhatsApp",
-        hint: "You can replace these links with your own anytime."
-      }
-    };
-
-    const c = COPY[lang];
-    document.title = c.title + " – Productora";
-
-    document.getElementById("t").textContent = c.title;
-    document.getElementById("lead").textContent = c.lead;
-    document.getElementById("cta").textContent = c.cta;
-    document.getElementById("hint").textContent = c.hint;
-
-    document.getElementById("emailLabel").textContent = c.email;
-    document.getElementById("igLabel").textContent = c.instagram;
-    document.getElementById("waLabel").textContent = c.whatsapp;
   </script>
 
   <main class="container">
-    <section class="section" style="padding-top:36px">
-      <h1 class="h1" id="t">Contact</h1>
-      <p class="p" id="lead"></p>
+    <section class="contact-wrap">
+      <!-- LEFT -->
+      <div class="panel">
+        <div class="panel-inner">
+          <div class="kicker" id="kicker">Contact</div>
+          <h1 class="big-title display" id="title">Hablemos.</h1>
+          <p class="lead" id="lead">
+            Para presupuestos, nuevos proyectos o colaboraciones, escribinos y te respondemos rápido.
+          </p>
 
-      <div style="height:18px"></div>
+          <div class="btnrow">
+            <a class="btn primary" id="btnEmail" href="#">Enviar email</a>
+            <a class="btn" id="btnWhatsApp" href="#" target="_blank" rel="noreferrer">WhatsApp</a>
+            <a class="btn" id="btnIG" href="#" target="_blank" rel="noreferrer">Instagram</a>
+          </div>
 
-      <div class="card" style="padding:20px">
-        <h2 class="h2" id="cta">Escribinos</h2>
-        <p class="p" id="hint"></p>
+          <div class="note" id="note">
+            También podés copiar el mail o el WhatsApp tocando las tarjetas de la derecha.
+          </div>
+        </div>
+      </div>
 
-        <div style="height:18px"></div>
+      <!-- RIGHT -->
+      <div class="panel">
+        <div class="panel-inner">
+          <div class="kicker" id="kicker2">Direct</div>
 
-        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
-          <a class="card" style="padding:18px" href="mailto:hola@tuproductora.com">
-            <div style="color:var(--muted2); font-size:12px; letter-spacing:.16em; text-transform:uppercase" id="emailLabel">Email</div>
-            <div style="margin-top:8px; font-size:16px">hola@tuproductora.com</div>
-          </a>
+          <div class="grid-actions">
+            <button class="action" id="copyEmail">
+              <div class="label" id="emailLabel">Email</div>
+              <div class="value" id="emailValue">hola@bycalabria.com</div>
+              <div class="hint" id="emailHint">Click para copiar</div>
+            </button>
 
-          <a class="card" style="padding:18px" href="https://instagram.com/" target="_blank" rel="noreferrer">
-            <div style="color:var(--muted2); font-size:12px; letter-spacing:.16em; text-transform:uppercase" id="igLabel">Instagram</div>
-            <div style="margin-top:8px; font-size:16px">@tuusuario</div>
-          </a>
+            <button class="action" id="copyPhone">
+              <div class="label" id="waLabel">WhatsApp</div>
+              <div class="value" id="waValue">+54 11 0000 0000</div>
+              <div class="hint" id="waHint">Click para copiar</div>
+            </button>
 
-          <a class="card" style="padding:18px" href="https://wa.me/5490000000000" target="_blank" rel="noreferrer">
-            <div style="color:var(--muted2); font-size:12px; letter-spacing:.16em; text-transform:uppercase" id="waLabel">WhatsApp</div>
-            <div style="margin-top:8px; font-size:16px">+54 9 ...</div>
-          </a>
+            <a class="action" id="openProjects" href="/projects/">
+              <div class="label" id="projLabel">Portfolio</div>
+              <div class="value" id="projValue">Ver Projects</div>
+              <div class="hint" id="projHint">Abrir grilla</div>
+            </a>
+
+            <a class="action" id="openAbout" href="/about.html">
+              <div class="label" id="aboutLabel">Studio</div>
+              <div class="value" id="aboutValue">About</div>
+              <div class="hint" id="aboutHint">Conocer más</div>
+            </a>
+          </div>
+
+          <div class="note mini" id="miniNote">
+            Horario: Lun–Vie 10:00–19:00 (GMT-3)
+          </div>
         </div>
       </div>
     </section>
   </main>
+
+  <div class="toast" id="toast">Copiado</div>
+
+  <script type="module">
+    import { getLang } from "/js/site.js";
+
+    const lang = getLang();
+
+    // ✅ EDITÁ ESTOS DATOS
+    const EMAIL = "hola@bycalabria.com";
+    const PHONE_INTL = "+54 11 0000 0000"; // cambiá por tu número real (con +54)
+    const IG_URL = "https://instagram.com/"; // poné tu IG real
+    const WHATSAPP_TEXT = "Hola! Quería consultar por un proyecto audiovisual.";
+
+    const COPY = {
+      es: {
+        title: "Hablemos.",
+        lead: "Para presupuestos, nuevos proyectos o colaboraciones, escribinos y te respondemos rápido.",
+        note: "También podés copiar el mail o el WhatsApp tocando las tarjetas de la derecha.",
+        emailLabel: "Email",
+        emailHint: "Click para copiar",
+        waLabel: "WhatsApp",
+        waHint: "Click para copiar",
+        projValue: "Ver Projects",
+        projHint: "Abrir grilla",
+        aboutValue: "About",
+        aboutHint: "Conocer más",
+        toast: "Copiado ✓",
+        btnEmail: "Enviar email",
+        btnWA: "WhatsApp",
+        btnIG: "Instagram",
+      },
+      en: {
+        title: "Let’s talk.",
+        lead: "For budgets, new projects or collaborations, send a message and we’ll reply fast.",
+        note: "You can also copy the email or WhatsApp by clicking the cards on the right.",
+        emailLabel: "Email",
+        emailHint: "Click to copy",
+        waLabel: "WhatsApp",
+        waHint: "Click to copy",
+        projValue: "See Projects",
+        projHint: "Open grid",
+        aboutValue: "About",
+        aboutHint: "Learn more",
+        toast: "Copied ✓",
+        btnEmail: "Send email",
+        btnWA: "WhatsApp",
+        btnIG: "Instagram",
+      }
+    };
+
+    const c = COPY[lang];
+
+    // text
+    document.getElementById("title").textContent = c.title;
+    document.getElementById("lead").textContent = c.lead;
+    document.getElementById("note").textContent = c.note;
+    document.getElementById("emailLabel").textContent = c.emailLabel;
+    document.getElementById("emailHint").textContent = c.emailHint;
+    document.getElementById("waLabel").textContent = c.waLabel;
+    document.getElementById("waHint").textContent = c.waHint;
+    document.getElementById("projValue").textContent = c.projValue;
+    document.getElementById("projHint").textContent = c.projHint;
+    document.getElementById("aboutValue").textContent = c.aboutValue;
+    document.getElementById("aboutHint").textContent = c.aboutHint;
+    document.getElementById("btnEmail").textContent = c.btnEmail;
+    document.getElementById("btnWhatsApp").textContent = c.btnWA;
+    document.getElementById("btnIG").textContent = c.btnIG;
+
+    // values
+    document.getElementById("emailValue").textContent = EMAIL;
+    document.getElementById("waValue").textContent = PHONE_INTL;
+
+    // links
+    document.getElementById("btnEmail").href = `mailto:${EMAIL}?subject=${encodeURIComponent("Consulta – Calabria")}`;
+    const waUrl = `https://wa.me/${PHONE_INTL.replace(/\D/g,"")}?text=${encodeURIComponent(WHATSAPP_TEXT)}`;
+    document.getElementById("btnWhatsApp").href = waUrl;
+    document.getElementById("btnIG").href = IG_URL;
+
+    // copy helpers
+    const toast = document.getElementById("toast");
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      clearTimeout(window.__t);
+      window.__t = setTimeout(()=>toast.classList.remove("show"), 1400);
+    }
+
+    async function copyText(t){
+      try{
+        await navigator.clipboard.writeText(t);
+        showToast(c.toast);
+      }catch(e){
+        showToast("Copy failed");
+      }
+    }
+
+    document.getElementById("copyEmail").addEventListener("click", ()=>copyText(EMAIL));
+    document.getElementById("copyPhone").addEventListener("click", ()=>copyText(PHONE_INTL));
+  </script>
 </body>
 </html>
