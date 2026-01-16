@@ -316,11 +316,12 @@ function videoEmbedHTML(url) {
 
         document.title = `${t} – ${c.title}`;
 
-        const id = vimeoId(project.vimeo_url);
-        detailVideo.innerHTML = id
-          ? `<iframe src="https://player.vimeo.com/video/${id}?autoplay=0&muted=0&title=0&byline=0&portrait=0"
-                    allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>`
-          : `<div style="padding:24px;opacity:.7">${c.invalidVideo}</div>`;
+ const embed = videoEmbedHTML(project.vimeo_url);
+
+detailVideo.innerHTML = embed
+  ? embed
+  : `<div style="padding:24px;opacity:.7">Video URL inválida (YouTube/Vimeo).</div>`;
+
       }
 
       function showList() {
