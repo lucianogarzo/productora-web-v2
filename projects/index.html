@@ -286,11 +286,17 @@
           ? projects.filter((p) => p.featured)
           : projects;
 
-        grid.innerHTML = list.map((p) => `
-          <a class="card" href="/projects/#/${encodeURIComponent(p.slug)}">
-            <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy" />
-            <div class="meta">
-              <h3>${titleFor(p)}</h3>
+       featuredGrid.innerHTML = featured.map(p => `
+  <a class="card" href="/projects/#/${encodeURIComponent(p.slug)}">
+    <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy"/>
+    <div class="meta">
+      <h3 class="display">${titleFor(p)}</h3>
+      <p>${[p.client, p.year].filter(Boolean).join(" • ")}</p>
+    </div>
+  </a>
+`).join("");
+
+
               <p>${[p.client, p.year].filter(Boolean).join(" • ")}</p>
             </div>
           </a>
