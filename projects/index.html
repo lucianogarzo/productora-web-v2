@@ -139,6 +139,31 @@
   from{ opacity:0; transform: translateY(6px); filter: blur(6px); }
   to{ opacity:1; transform: translateY(0); filter: blur(0); }
 }
+.gallery{
+  margin-top: 16px;
+  display:grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 900px){
+  .gallery{ grid-template-columns: repeat(2, 1fr); }
+}
+
+.gallery img{
+  width:100%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: transform .25s ease, opacity .25s ease;
+  opacity: .95;
+}
+.gallery img:hover{
+  transform: scale(1.01);
+  opacity: 1;
+}
 
       }
     </style>
