@@ -3,20 +3,20 @@ import { getLang, toggleLang } from "/js/site.js";
 
 const COPY = {
   es: {
-    brand: "Productora Web",
+    brand: "Calabria",
     projects: "Projects",
     about: "About",
     contact: "Contact",
     lang: "ES",
-    footer: "© " + new Date().getFullYear() + " Productora. All rights reserved.",
+    footer: "© " + new Date().getFullYear() + " Calabria. All rights reserved.",
   },
   en: {
-    brand: "Production Studio",
+    brand: "Calabria",
     projects: "Projects",
     about: "About",
     contact: "Contact",
     lang: "EN",
-    footer: "© " + new Date().getFullYear() + " Studio. All rights reserved.",
+    footer: "© " + new Date().getFullYear() + " Calabria. All rights reserved.",
   }
 };
 
