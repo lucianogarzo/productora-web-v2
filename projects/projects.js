@@ -23,10 +23,9 @@ const COPY = {
     filters: ["All", "Featured"],
   },
 };
-
 const c = COPY[lang];
 
-// --- dom
+// DOM
 const listView = document.getElementById("listView");
 const detailView = document.getElementById("detailView");
 
@@ -43,57 +42,57 @@ const detailSub = document.getElementById("detailSub");
 const detailVideo = document.getElementById("detailVideo");
 const detailDesc = document.getElementById("detailDesc");
 const gallery = document.getElementById("gallery");
+
+// Lightbox DOM (must exist in projects/index.html)
 const lightbox = document.getElementById("lightbox");
 const lightboxImg = document.getElementById("lightboxImg");
 const lightboxClose = document.getElementById("lightboxClose");
+const lightboxPrev = document.getElementById("lightboxPrev");
+const lightboxNext = document.getElementById("lightboxNext");
+const lightboxCount = document.getElementById("lightboxCount");
 
+// State
+let projects = [];
+let filterMode = "all";
 
+// Lightbox state
+let lbImages = [];
+let lbIndex = 0;
 
 pageTitle.textContent = c.title;
 pageSubtitle.textContent = c.subtitle;
 backBtn.textContent = c.back;
 
-// --- state
-let projects = [];
-let filterMode = "all"; // all | featured
-
 function titleFor(p) {
   return lang === "es" ? p.title_es : p.title_en;
 }
-
 function descFor(p) {
   return lang === "es" ? p.description_es : p.description_en;
 }
 
-/* -----------------------------
-   Video helpers (YouTube+Vimeo)
------------------------------- */
+// ---------- Video helpers ----------
 function vimeoId(url) {
   if (!url) return null;
-  const m = String(url).match(/\b(\d{6,12})\b/);
+  const s = String(url);
+  // tries to extract a long-ish numeric id
+  const m = s.match(/(?:vimeo\.com\/(?:video\/)?|\/)(\d{6,12})(?:$|[?/])/);
   return m ? m[1] : null;
 }
 
 function youtubeId(url) {
   if (!url) return null;
-
   try {
-    const u = new URL(url);
-
-    // youtu.be/<id>
+    const u = new URL(String(url));
     if (u.hostname.includes("youtu.be")) {
       return u.pathname.replace("/", "");
     }
-
-    // youtube.com/watch?v=<id>
     if (u.searchParams.get("v")) {
       return u.searchParams.get("v");
     }
-
-    // youtube.com/embed/<id> or /shorts/<id>
-    const parts = u.pathname.split("/");
-    return parts.pop() || null;
-  } catch (e) {
+    const parts = u.pathname.split("/").filter(Boolean);
+    const last = parts[parts.length - 1];
+    return last || null;
+  } catch {
     return null;
   }
 }
@@ -120,9 +119,58 @@ function videoEmbedHTML(url) {
   return null;
 }
 
-/* -----------------------------
-   Render list
------------------------------- */
+// ---------- Lightbox ----------
+function updateLightbox() {
+  const total = lbImages.length;
+  if (!total || !lightboxImg) return;
+
+  if (lbIndex < 0) lbIndex = total - 1;
+  if (lbIndex >= total) lbIndex = 0;
+
+  lightboxImg.src = lbImages[lbIndex];
+  if (lightboxCount) lightboxCount.textContent = `${lbIndex + 1} / ${total}`;
+}
+
+function openLightbox(images, index = 0) {
+  if (!lightbox || !lightboxImg) return;
+  lbImages = images || [];
+  lbIndex = index || 0;
+
+  lightbox.classList.remove("hidden");
+  lightbox.setAttribute("aria-hidden", "false");
+  document.body.style.overflow = "hidden";
+  updateLightbox();
+}
+
+function closeLightbox() {
+  if (!lightbox || !lightboxImg) return;
+  lightbox.classList.add("hidden");
+  lightbox.setAttribute("aria-hidden", "true");
+  lightboxImg.src = "";
+  document.body.style.overflow = "";
+}
+
+function prevLightbox() { lbIndex -= 1; updateLightbox(); }
+function nextLightbox() { lbIndex += 1; updateLightbox(); }
+
+if (lightboxClose) lightboxClose.addEventListener("click", closeLightbox);
+if (lightboxPrev) lightboxPrev.addEventListener("click", prevLightbox);
+if (lightboxNext) lightboxNext.addEventListener("click", nextLightbox);
+
+if (lightbox) {
+  lightbox.addEventListener("click", (e) => {
+    if (e.target === lightbox) closeLightbox();
+  });
+}
+
+window.addEventListener("keydown", (e) => {
+  if (!lightbox || lightbox.classList.contains("hidden")) return;
+  if (e.key === "Escape") closeLightbox();
+  if (e.key === "ArrowLeft") prevLightbox();
+  if (e.key === "ArrowRight") nextLightbox();
+});
+
+// ---------- UI ----------
 function renderFilters() {
   filters.innerHTML = `
     <button class="pill ${filterMode === "all" ? "active" : ""}" data-mode="all">${c.filters[0]}</button>
@@ -154,49 +202,29 @@ function renderList() {
   `).join("");
 }
 
-/* -----------------------------
-   Render detail (Loader + fade)
------------------------------- */
-function resetDetailAnimations() {
-  detailTitle.classList.remove("fade-in");
-  detailSub.classList.remove("fade-in");
-  detailDesc.classList.remove("fade-in");
-}
-
 async function renderDetail(slug) {
-  resetDetailAnimations();
-  
-// gallery
-const imgs = project.gallery || [];
-if (gallery) {
-  gallery.innerHTML = imgs.length
-    ? imgs.map(url => `<img src="${url}" loading="lazy" alt="" data-full="${url}">`).join("")
-    : "";
-
-  gallery.querySelectorAll("img[data-full]").forEach(img => {
-    img.addEventListener("click", () => openLightbox(img.dataset.full));
-  });
-}
-
-  // reset detail content
+  // reset
   detailSlug.textContent = slug ? `/${slug}` : "";
   detailTitle.textContent = "";
   detailSub.textContent = "";
   detailDesc.textContent = "";
+  detailVideo.innerHTML = "";
+  if (gallery) gallery.innerHTML = "";
 
-  // reset video area (restore loader)
-  detailVideo.innerHTML = `<div class="video-loading" id="videoLoading">Loading…</div>`;
-
-  const project = await fetchProjectBySlug(slug);
+  let project;
+  try {
+    project = await fetchProjectBySlug(slug);
+  } catch (err) {
+    console.error("fetchProjectBySlug failed", err);
+    detailTitle.textContent = "Error loading project";
+    detailDesc.textContent = String(err?.message || err);
+    return;
+  }
 
   if (!project) {
     detailTitle.textContent = c.notFoundTitle;
-    detailVideo.innerHTML = "";
     detailDesc.textContent = c.notFoundDesc(slug);
     document.title = `${c.notFoundTitle} – ${c.title}`;
-
-    detailTitle.classList.add("fade-in");
-    detailDesc.classList.add("fade-in");
     return;
   }
 
@@ -207,24 +235,28 @@ if (gallery) {
   document.title = `${t} – ${c.title}`;
 
   const embed = videoEmbedHTML(project.vimeo_url);
+  detailVideo.innerHTML = embed
+    ? embed
+    : `<div style="padding:24px;opacity:.7">${c.invalidVideo}</div>`;
 
-  if (embed) {
-    detailVideo.insertAdjacentHTML("afterbegin", embed);
-    const loader = document.getElementById("videoLoading");
-    if (loader) loader.style.display = "none";
-  } else {
-    detailVideo.innerHTML = `<div style="padding:24px;opacity:.7">${c.invalidVideo}</div>`;
+  // Gallery
+  const imgs = Array.isArray(project.gallery) ? project.gallery.filter(Boolean) : [];
+  if (gallery && imgs.length) {
+    gallery.innerHTML = imgs
+      .map((url, idx) => `<img src="${url}" loading="lazy" alt="" data-idx="${idx}">`)
+      .join("");
+
+    gallery.querySelectorAll("img[data-idx]").forEach((img) => {
+      img.addEventListener("click", () => {
+        const idx = Number(img.getAttribute("data-idx") || 0);
+        openLightbox(imgs, idx);
+      });
+    });
+  } else if (gallery) {
+    gallery.innerHTML = "";
   }
-
-  // fade-in text
-  detailTitle.classList.add("fade-in");
-  detailSub.classList.add("fade-in");
-  detailDesc.classList.add("fade-in");
 }
 
-/* -----------------------------
-   Views + router
------------------------------- */
 function showList() {
   detailView.classList.add("hidden");
   listView.classList.remove("hidden");
@@ -252,38 +284,16 @@ function route() {
 }
 
 window.addEventListener("hashchange", route);
-function openLightbox(url) {
-  if (!lightbox || !lightboxImg) return;
-  lightboxImg.src = url;
-  lightbox.classList.remove("hidden");
-  lightbox.setAttribute("aria-hidden", "false");
-  document.body.style.overflow = "hidden";
-}
 
-function closeLightbox() {
-  if (!lightbox || !lightboxImg) return;
-  lightbox.classList.add("hidden");
-  lightbox.setAttribute("aria-hidden", "true");
-  lightboxImg.src = "";
-  document.body.style.overflow = "";
-}
-
-if (lightboxClose) lightboxClose.addEventListener("click", closeLightbox);
-if (lightbox) {
-  lightbox.addEventListener("click", (e) => {
-    if (e.target === lightbox) closeLightbox();
-  });
-}
-window.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeLightbox();
-});
-
-/* -----------------------------
-   Init
------------------------------- */
+// Init
 (async () => {
-  renderFilters();
-  projects = await fetchProjects();
-  renderList();
-  route();
+  try {
+    renderFilters();
+    projects = await fetchProjects();
+    renderList();
+    route();
+  } catch (err) {
+    console.error("Init failed", err);
+    grid.innerHTML = `<div style="padding:20px;opacity:.7">Error loading projects.</div>`;
+  }
 })();
