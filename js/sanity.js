@@ -42,6 +42,7 @@ export async function fetchProjectBySlug(slug) {
     featured,
     order,
     "thumbnail": thumbnail.asset->url
+    "gallery": gallery[].asset->url
   }`;
 
   const res = await fetch(sanityQueryUrl(groq));
