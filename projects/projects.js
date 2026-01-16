@@ -42,6 +42,8 @@ const detailTitle = document.getElementById("detailTitle");
 const detailSub = document.getElementById("detailSub");
 const detailVideo = document.getElementById("detailVideo");
 const detailDesc = document.getElementById("detailDesc");
+const gallery = document.getElementById("gallery");
+
 
 pageTitle.textContent = c.title;
 pageSubtitle.textContent = c.subtitle;
@@ -159,6 +161,14 @@ function resetDetailAnimations() {
 
 async function renderDetail(slug) {
   resetDetailAnimations();
+  
+// gallery
+const imgs = project.gallery || [];
+if (gallery) {
+  gallery.innerHTML = imgs.length
+    ? imgs.map(url => `<img src="${url}" loading="lazy" alt="">`).join("")
+    : "";
+}
 
   // reset detail content
   detailSlug.textContent = slug ? `/${slug}` : "";
