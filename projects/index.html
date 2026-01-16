@@ -4,17 +4,23 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Projects</title>
+
+    <!-- Main styles -->
     <link rel="stylesheet" href="/css/style.css" />
 
+    <!-- SEO / OG -->
     <meta name="description" content="Portfolio de proyectos audiovisuales." />
-<link rel="icon" href="/assets/favicon.png" />
-<meta property="og:image" content="https://productora-web-v2.pages.dev/assets/og.jpg" />
-<meta property="og:url" content="https://www.bycalabria.com/projects/" />
-<link rel="canonical" href="https://www.bycalabria.com/projects/" />
-
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Calabria – Projects" />
+    <meta property="og:description" content="Selección de trabajos audiovisuales." />
+    <meta property="og:image" content="https://productora-web-v2.pages.dev/assets/og.jpg" />
+    <meta property="og:url" content="https://productora-web-v2.pages.dev/projects/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" href="/assets/favicon.png" />
+    <link rel="canonical" href="https://www.bycalabria.com/projects/" />
 
     <style>
-      /* small page-specific tweaks */
+      /* page-specific */
       .top {
         display: flex;
         justify-content: space-between;
@@ -46,7 +52,9 @@
         font-size: 13px;
         opacity: 0.9;
       }
-      .pill:hover { opacity: 1; }
+      .pill:hover {
+        opacity: 1;
+      }
       .pill.active {
         background: rgba(255, 255, 255, 0.12);
         border-color: rgba(255, 255, 255, 0.22);
@@ -108,27 +116,25 @@
         white-space: pre-wrap;
       }
 
-      .hidden { display: none; }
+      .hidden {
+        display: none;
+      }
     </style>
   </head>
 
   <body>
-   <script type="module">
-import { mountNav } from "/js/nav.js";
-       mountNav();
-</script>
-<script type="module">
-  import { getLang } from "/js/site.js";
-  import { fetchProjects, fetchProjectBySlug } from "/js/sanity.js";
-</script>
-
+    <!-- NAV mount -->
+    <script type="module">
+      import { mountNav } from "/js/nav.js";
+      mountNav();
+    </script>
 
     <main class="container">
       <!-- LIST VIEW -->
       <section id="listView" class="section" style="padding-top: 36px">
         <div class="top">
           <div>
-           <h1 class="h1 display" id="pageTitle">Projects</h1>
+            <h1 class="h1 display" id="pageTitle">Projects</h1>
             <p class="subtitle" id="pageSubtitle">
               Selección de trabajos. Dirección, producción y post.
             </p>
@@ -149,7 +155,7 @@ import { mountNav } from "/js/nav.js";
           <span style="color: var(--muted2); font-size: 13px" id="detailSlug"></span>
         </div>
 
-        <h1 class="detail-title display" id="detailTitle">
+        <h1 class="detail-title display" id="detailTitle"></h1>
         <p class="detail-sub" id="detailSub"></p>
 
         <div class="detail-video" id="detailVideo"></div>
@@ -158,220 +164,7 @@ import { mountNav } from "/js/nav.js";
       </section>
     </main>
 
-    <script type="module">
-      import { getLang } from "../js/site.js";
-import { fetchProjects, fetchProjectBySlug } from "../js/sanity.js";
-
-
-      // --- language copy
-      const lang = getLang();
-
-      const COPY = {
-        es: {
-          title: "Projects",
-          subtitle: "Selección de trabajos. Dirección, producción y post.",
-          back: "← Projects",
-          notFoundTitle: "Project not found",
-          notFoundDesc: (slug) => `No se encontró el proyecto con slug: ${slug}`,
-          invalidVideo: "Video URL inválida (YouTube/Vimeo).",
-          filters: ["All", "Featured"],
-        },
-        en: {
-          title: "Projects",
-          subtitle: "Selected work. Direction, production and post.",
-          back: "← Projects",
-          notFoundTitle: "Project not found",
-          notFoundDesc: (slug) => `No project found for slug: ${slug}`,
-          invalidVideo: "Invalid video URL (YouTube/Vimeo).",
-          filters: ["All", "Featured"],
-        },
-      };
-
-      const c = COPY[lang];
-
-      // --- dom
-      const listView = document.getElementById("listView");
-      const detailView = document.getElementById("detailView");
-
-      const grid = document.getElementById("grid");
-      const filters = document.getElementById("filters");
-
-      const pageTitle = document.getElementById("pageTitle");
-      const pageSubtitle = document.getElementById("pageSubtitle");
-
-      const backBtn = document.getElementById("backBtn");
-      const detailSlug = document.getElementById("detailSlug");
-      const detailTitle = document.getElementById("detailTitle");
-      const detailSub = document.getElementById("detailSub");
-      const detailVideo = document.getElementById("detailVideo");
-      const detailDesc = document.getElementById("detailDesc");
-
-      pageTitle.textContent = c.title;
-      pageSubtitle.textContent = c.subtitle;
-      backBtn.textContent = c.back;
-
-      // --- state
-      let projects = [];
-      let filterMode = "all"; // all | featured
-
-      function titleFor(p) {
-        return lang === "es" ? p.title_es : p.title_en;
-      }
-
-      function descFor(p) {
-        return lang === "es" ? p.description_es : p.description_en;
-      }
-
-      // --- video helpers (YouTube + Vimeo)
-      function vimeoId(url) {
-        if (!url) return null;
-        const m = String(url).match(/\b(\d{6,12})\b/);
-        return m ? m[1] : null;
-      }
-
-      function youtubeId(url) {
-        if (!url) return null;
-        try {
-          const u = new URL(url);
-
-          if (u.hostname.includes("youtu.be")) {
-            return u.pathname.replace("/", "");
-          }
-
-          if (u.searchParams.get("v")) {
-            return u.searchParams.get("v");
-          }
-
-          const parts = u.pathname.split("/");
-          return parts.pop() || null;
-        } catch (e) {
-          return null;
-        }
-      }
-
-      function videoEmbedHTML(url) {
-        const yt = youtubeId(url);
-        if (yt) {
-          return `<iframe
-            src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=0&mute=0&controls=1&modestbranding=1&rel=0"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowfullscreen
-          ></iframe>`;
-        }
-
-        const vm = vimeoId(url);
-        if (vm) {
-          return `<iframe
-            src="https://player.vimeo.com/video/${vm}?autoplay=0&muted=0&title=0&byline=0&portrait=0"
-            allow="autoplay; fullscreen; picture-in-picture"
-            allowfullscreen
-          ></iframe>`;
-        }
-
-        return null;
-      }
-
-      // --- render list
-      function renderFilters() {
-        filters.innerHTML = `
-          <button class="pill ${filterMode === "all" ? "active" : ""}" data-mode="all">${c.filters[0]}</button>
-          <button class="pill ${filterMode === "featured" ? "active" : ""}" data-mode="featured">${c.filters[1]}</button>
-        `;
-
-        filters.querySelectorAll(".pill").forEach((btn) => {
-          btn.addEventListener("click", () => {
-            filterMode = btn.getAttribute("data-mode");
-            renderList();
-            renderFilters();
-          });
-        });
-      }
-
-      function renderList() {
-        const list = filterMode === "featured"
-          ? projects.filter((p) => p.featured)
-          : projects;
-
-       featuredGrid.innerHTML = featured.map(p => `
-  <a class="card" href="/projects/#/${encodeURIComponent(p.slug)}">
-    <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy"/>
-    <div class="meta">
-      <h3 class="display">${titleFor(p)}</h3>
-      <p>${[p.client, p.year].filter(Boolean).join(" • ")}</p>
-    </div>
-  </a>
-`).join("");
-
-
-              <p>${[p.client, p.year].filter(Boolean).join(" • ")}</p>
-            </div>
-          </a>
-        `).join("");
-      }
-
-      // --- render detail
-      async function renderDetail(slug) {
-        detailSlug.textContent = slug ? `/${slug}` : "";
-        const project = await fetchProjectBySlug(slug);
-
-        if (!project) {
-          detailTitle.textContent = c.notFoundTitle;
-          detailSub.textContent = "";
-          detailVideo.innerHTML = "";
-          detailDesc.textContent = c.notFoundDesc(slug);
-          document.title = `${c.notFoundTitle} – ${c.title}`;
-          return;
-        }
-
-        const t = titleFor(project);
-        detailTitle.textContent = t;
-        detailSub.textContent = [project.client, project.year].filter(Boolean).join(" • ");
-        detailDesc.textContent = descFor(project) || "";
-
-        document.title = `${t} – ${c.title}`;
-
-        const embed = videoEmbedHTML(project.vimeo_url);
-        detailVideo.innerHTML = embed
-          ? embed
-          : `<div style="padding:24px;opacity:.7">${c.invalidVideo}</div>`;
-      }
-
-      function showList() {
-        detailView.classList.add("hidden");
-        listView.classList.remove("hidden");
-        document.title = c.title;
-      }
-
-      function showDetail() {
-        listView.classList.add("hidden");
-        detailView.classList.remove("hidden");
-      }
-
-      // --- router
-      function route() {
-        const hash = location.hash || "";
-        const m = hash.match(/^#\/(.+)$/);
-
-        if (!m) {
-          showList();
-          renderList();
-          return;
-        }
-
-        const slug = decodeURIComponent(m[1]);
-        showDetail();
-        renderDetail(slug);
-      }
-
-      window.addEventListener("hashchange", route);
-
-      // --- init
-      (async () => {
-        renderFilters();
-        projects = await fetchProjects();
-        renderList();
-        route();
-      })();
-    </script>
+    <!-- ✅ main logic (external JS) -->
+    <script type="module" src="/projects/projects.js"></script>
   </body>
 </html>
