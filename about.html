@@ -3,113 +3,315 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>About</title>
+  <title>About – Calabria</title>
   <link rel="stylesheet" href="/css/style.css"/>
-  <meta name="description" content="Portfolio de proyectos audiovisuales." />
-  <meta name="robots" content="index,follow" />
 
-<link rel="icon" href="/assets/favicon.png" />
-<meta property="og:image" content="https://productora-web-v2.pages.dev/assets/og.jpg" />
-<meta property="og:url" content="https://www.bycalabria.com/about.html" />
-<link rel="canonical" href="https://www.bycalabria.com/about.html" />
+  <meta name="description" content="Calabria. Productora audiovisual: dirección, producción y post." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="About – Calabria" />
+  <meta property="og:description" content="Dirección, producción y post. Estética cinematográfica." />
+  <meta property="og:image" content="https://productora-web-v2.pages.dev/assets/og.jpg" />
+  <meta property="og:url" content="https://productora-web-v2.pages.dev/about.html" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" href="/assets/favicon.png" />
+  <link rel="canonical" href="https://www.bycalabria.com/about.html" />
 
+  <style>
+    .about-wrap{
+      padding-top: 38px;
+      padding-bottom: 70px;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 22px;
+    }
+    @media (max-width: 900px){
+      .about-wrap{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,.03);
+      overflow:hidden;
+    }
+
+    .panel-inner{ padding: 20px; }
+
+    .kicker{
+      font-size: 12px;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin-bottom: 10px;
+    }
+
+    .big-title{
+      margin: 0 0 10px;
+      font-size: 46px;
+      line-height: 1.02;
+      max-width: 20ch;
+    }
+
+    .lead{
+      margin: 0;
+      color: var(--muted);
+      max-width: 75ch;
+      line-height: 1.55;
+      font-size: 16px;
+    }
+
+    .section-title{
+      margin: 18px 0 10px;
+      font-size: 13px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.75);
+    }
+
+    .bullets{
+      margin: 0;
+      padding-left: 16px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .quote{
+      margin-top: 18px;
+      padding: 14px 14px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.25);
+      color: rgba(255,255,255,.78);
+      line-height: 1.55;
+    }
+
+    .mini-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+    @media (max-width: 520px){
+      .mini-grid{ grid-template-columns: 1fr; }
+    }
+
+    .card2{
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(0,0,0,.25);
+      padding: 14px;
+    }
+    .card2 .label{
+      font-size: 12px;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin-bottom: 8px;
+    }
+    .card2 .value{
+      color: rgba(255,255,255,.88);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .btnrow{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.2);
+      background: rgba(255,255,255,.08);
+      color: var(--fg);
+      cursor:pointer;
+      font-size: 14px;
+      opacity: .95;
+      white-space: nowrap;
+    }
+    .btn:hover{ opacity:1; background: rgba(255,255,255,.12); }
+
+    .btn.primary{
+      background: rgba(255,255,255,.18);
+      border-color: rgba(255,255,255,.28);
+    }
+  </style>
 </head>
 
 <body>
   <script type="module">
     import { mountNav } from "/js/nav.js";
-    import { getLang } from "/js/site.js";
     mountNav();
+  </script>
 
+  <main class="container">
+    <section class="about-wrap">
+
+      <!-- LEFT -->
+      <div class="panel">
+        <div class="panel-inner">
+          <div class="kicker" id="kicker">About</div>
+          <h1 class="big-title display" id="title">Una productora chica. Una estética grande.</h1>
+
+          <p class="lead" id="lead">
+            Calabria es una productora audiovisual enfocada en una estética cinematográfica:
+            ritmo, puesta, luz y detalle. Trabajamos con marcas y artistas, desde la idea hasta el delivery final.
+          </p>
+
+          <div class="section-title" id="servicesTitle">Servicios</div>
+          <ul class="bullets" id="services">
+            <li>Dirección y producción</li>
+            <li>Videoclips / comerciales / contenido</li>
+            <li>Postproducción: edición, color, sonido</li>
+            <li>Entrega master + versiones para redes</li>
+          </ul>
+
+          <div class="quote" id="quote">
+            “Menos ruido. Más intención. Cine aplicado a piezas cortas.”
+          </div>
+
+          <div class="btnrow">
+            <a class="btn primary" href="/projects/" id="btnProjects">Ver Projects</a>
+            <a class="btn" href="/contact.html" id="btnContact">Contacto</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT -->
+      <div class="panel">
+        <div class="panel-inner">
+          <div class="kicker" id="kicker2">Studio</div>
+
+          <div class="mini-grid">
+            <div class="card2">
+              <div class="label" id="baseLabel">Base</div>
+              <div class="value" id="baseValue">Buenos Aires, Argentina</div>
+            </div>
+            <div class="card2">
+              <div class="label" id="modeLabel">Modo</div>
+              <div class="value" id="modeValue">Rodaje ágil + post cuidada</div>
+            </div>
+            <div class="card2">
+              <div class="label" id="crewLabel">Equipo</div>
+              <div class="value" id="crewValue">Red de colaboradores (según proyecto)</div>
+            </div>
+            <div class="card2">
+              <div class="label" id="deliverLabel">Entregas</div>
+              <div class="value" id="deliverValue">Master + cortes para redes</div>
+            </div>
+          </div>
+
+          <div class="section-title" id="howTitle" style="margin-top:18px">Cómo trabajamos</div>
+          <ul class="bullets" id="how">
+            <li>Pre: idea, referencias, plan</li>
+            <li>Rodaje: dirección + producción</li>
+            <li>Post: edición / color / sonido</li>
+            <li>Entrega: masters y adaptaciones</li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script type="module">
+    import { getLang } from "/js/site.js";
     const lang = getLang();
+
     const COPY = {
       es: {
-        title: "About",
-        lead: "Somos una productora audiovisual con foco en estética cinematográfica y ejecución ágil.",
-        p1: "Hacemos comerciales, videoclips y contenido digital. Acompañamos desde la idea hasta la entrega final: dirección, producción, rodaje y postproducción.",
-        p2: "Nos interesa el detalle: luz, ritmo, sonido y color. Buscamos impacto visual, claridad narrativa y calidad técnica.",
+        title: "Una productora chica. Una estética grande.",
+        lead:
+          "Calabria es una productora audiovisual enfocada en una estética cinematográfica: ritmo, puesta, luz y detalle. Trabajamos con marcas y artistas, desde la idea hasta el delivery final.",
         servicesTitle: "Servicios",
         services: [
-          "Dirección & Producción",
-          "Rodaje (crew completo)",
-          "Edición",
-          "Color grading",
-          "Sonido / música",
-          "Entrega para redes y medios",
+          "Dirección y producción",
+          "Videoclips / comerciales / contenido",
+          "Postproducción: edición, color, sonido",
+          "Entrega master + versiones para redes"
         ],
-        clientsTitle: "Clientes / Colaboraciones",
-        clientsHint: "Podés completar esto más adelante con nombres o logos."
+        quote: "“Menos ruido. Más intención. Cine aplicado a piezas cortas.”",
+        btnProjects: "Ver Projects",
+        btnContact: "Contacto",
+        baseLabel: "Base",
+        baseValue: "Buenos Aires, Argentina",
+        modeLabel: "Modo",
+        modeValue: "Rodaje ágil + post cuidada",
+        crewLabel: "Equipo",
+        crewValue: "Red de colaboradores (según proyecto)",
+        deliverLabel: "Entregas",
+        deliverValue: "Master + cortes para redes",
+        howTitle: "Cómo trabajamos",
+        how: [
+          "Pre: idea, referencias, plan",
+          "Rodaje: dirección + producción",
+          "Post: edición / color / sonido",
+          "Entrega: masters y adaptaciones"
+        ]
       },
       en: {
-        title: "About",
-        lead: "We’re an audiovisual production studio focused on cinematic aesthetics and fast execution.",
-        p1: "We produce commercials, music videos and digital content. We support projects end-to-end: direction, production, shooting and post-production.",
-        p2: "We care about the details: lighting, rhythm, sound and color. Our goal is visual impact, narrative clarity and high technical quality.",
+        title: "A small studio. A big aesthetic.",
+        lead:
+          "Calabria is an audiovisual studio focused on cinematic aesthetics: rhythm, staging, light and detail. We work with brands and artists, from concept to final delivery.",
         servicesTitle: "Services",
         services: [
-          "Direction & Production",
-          "Full crew shooting",
-          "Editing",
-          "Color grading",
-          "Sound / music",
-          "Deliverables for social & broadcast",
+          "Direction & production",
+          "Music videos / commercials / content",
+          "Post: editing, color, sound",
+          "Master delivery + social cutdowns"
         ],
-        clientsTitle: "Clients / Collaborations",
-        clientsHint: "You can fill this later with names or logos."
+        quote: "“Less noise. More intention. Cinema applied to short formats.”",
+        btnProjects: "See Projects",
+        btnContact: "Contact",
+        baseLabel: "Base",
+        baseValue: "Buenos Aires, Argentina",
+        modeLabel: "Mode",
+        modeValue: "Agile shoots + careful post",
+        crewLabel: "Crew",
+        crewValue: "Network of collaborators (per project)",
+        deliverLabel: "Delivery",
+        deliverValue: "Masters + social cutdowns",
+        howTitle: "How we work",
+        how: [
+          "Pre: concept, references, plan",
+          "Shoot: direction + production",
+          "Post: edit / color / sound",
+          "Delivery: masters and adaptations"
+        ]
       }
     };
 
     const c = COPY[lang];
-    document.title = c.title + " – Productora";
 
-    document.getElementById("t").textContent = c.title;
+    document.getElementById("title").textContent = c.title;
     document.getElementById("lead").textContent = c.lead;
-    document.getElementById("p1").textContent = c.p1;
-    document.getElementById("p2").textContent = c.p2;
 
     document.getElementById("servicesTitle").textContent = c.servicesTitle;
-    document.getElementById("clientsTitle").textContent = c.clientsTitle;
-    document.getElementById("clientsHint").textContent = c.clientsHint;
+    document.getElementById("services").innerHTML = c.services.map(x => `<li>${x}</li>`).join("");
 
-    const ul = document.getElementById("services");
-    ul.innerHTML = c.services.map(s => `<li>${s}</li>`).join("");
+    document.getElementById("quote").textContent = c.quote;
+
+    document.getElementById("btnProjects").textContent = c.btnProjects;
+    document.getElementById("btnContact").textContent = c.btnContact;
+
+    document.getElementById("baseLabel").textContent = c.baseLabel;
+    document.getElementById("baseValue").textContent = c.baseValue;
+    document.getElementById("modeLabel").textContent = c.modeLabel;
+    document.getElementById("modeValue").textContent = c.modeValue;
+    document.getElementById("crewLabel").textContent = c.crewLabel;
+    document.getElementById("crewValue").textContent = c.crewValue;
+    document.getElementById("deliverLabel").textContent = c.deliverLabel;
+    document.getElementById("deliverValue").textContent = c.deliverValue;
+
+    document.getElementById("howTitle").textContent = c.howTitle;
+    document.getElementById("how").innerHTML = c.how.map(x => `<li>${x}</li>`).join("");
   </script>
-
-  <main class="container">
-    <section class="section" style="padding-top:36px">
-      <h1 class="h1" id="t">About</h1>
-      <p class="p" id="lead"></p>
-
-      <div style="height:18px"></div>
-
-      <div class="card" style="padding:20px">
-        <p class="p" id="p1"></p>
-        <div style="height:10px"></div>
-        <p class="p" id="p2"></p>
-
-        <div style="height:22px"></div>
-
-        <h2 class="h2" id="servicesTitle">Servicios</h2>
-        <ul id="services" style="margin:10px 0 0; padding-left:18px; color:var(--muted)">
-          <!-- filled by JS -->
-        </ul>
-
-        <div style="height:22px"></div>
-
-        <h2 class="h2" id="clientsTitle">Clientes / Colaboraciones</h2>
-        <p class="p" id="clientsHint"></p>
-
-        <div style="height:14px"></div>
-
-        <!-- Placeholder for future logos/names -->
-        <div class="grid">
-          <div class="card" style="height:80px; display:flex; align-items:center; justify-content:center; color:var(--muted2)">LOGO</div>
-          <div class="card" style="height:80px; display:flex; align-items:center; justify-content:center; color:var(--muted2)">LOGO</div>
-          <div class="card" style="height:80px; display:flex; align-items:center; justify-content:center; color:var(--muted2)">LOGO</div>
-          <div class="card" style="height:80px; display:flex; align-items:center; justify-content:center; color:var(--muted2)">LOGO</div>
-        </div>
-      </div>
-    </section>
-  </main>
 </body>
 </html>
