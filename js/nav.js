@@ -1,4 +1,5 @@
-import { getLang, toggleLang } from "./site.js";
+import { getLang, toggleLang } from "/js/site.js";
+
 
 const COPY = {
   es: {
