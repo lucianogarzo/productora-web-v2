@@ -1,5 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap");
 
+.kicker {
+  font-size: 12px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--muted2);
+}
+
 :root{
   --bg:#000;
   --fg:#fff;
