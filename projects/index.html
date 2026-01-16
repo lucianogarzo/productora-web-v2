@@ -108,11 +108,6 @@
   <body>
     <script type="module">
       import { mountNav } from "/js/nav.js";
-      const grid = document.getElementById("grid");
-grid.innerHTML = `<div style="opacity:.7;padding:18px;border:1px solid rgba(255,255,255,.15);border-radius:14px">
-Loading projects...
-</div>`;
-
       mountNav();
     </script>
 
@@ -146,7 +141,6 @@ Loading projects...
         <p class="detail-sub" id="detailSub"></p>
 
         <div class="detail-video" id="detailVideo"></div>
-<div id="videoDebug" style="padding:10px 0;color:rgba(255,255,255,.6);font-size:12px"></div>
 
         <div class="detail-desc" id="detailDesc"></div>
       </section>
@@ -166,7 +160,7 @@ Loading projects...
           back: "← Projects",
           notFoundTitle: "Project not found",
           notFoundDesc: (slug) => `No se encontró el proyecto con slug: ${slug}`,
-          invalidVideo: "Vimeo URL inválida.",
+          invalidVideo: "Video URL inválida (YouTube/Vimeo).",
           filters: ["All", "Featured"],
         },
         en: {
@@ -175,7 +169,7 @@ Loading projects...
           back: "← Projects",
           notFoundTitle: "Project not found",
           notFoundDesc: (slug) => `No project found for slug: ${slug}`,
-          invalidVideo: "Invalid Vimeo URL.",
+          invalidVideo: "Invalid video URL (YouTube/Vimeo).",
           filters: ["All", "Featured"],
         },
       };
@@ -215,103 +209,53 @@ Loading projects...
         return lang === "es" ? p.description_es : p.description_en;
       }
 
-function vimeoId(url) {
-  if (!url) return null;
-  const m = String(url).match(/\b(\d{6,12})\b/);
-  return m ? m[1] : null;
-}
+      // --- video helpers (YouTube + Vimeo)
+      function vimeoId(url) {
+        if (!url) return null;
+        const m = String(url).match(/\b(\d{6,12})\b/);
+        return m ? m[1] : null;
+      }
 
-function youtubeId(url) {
-  if (!url) return null;
+      function youtubeId(url) {
+        if (!url) return null;
+        try {
+          const u = new URL(url);
 
-  try {
-    const u = new URL(url);
+          if (u.hostname.includes("youtu.be")) {
+            return u.pathname.replace("/", "");
+          }
 
-    // youtu.be/<id>
-    if (u.hostname.includes("youtu.be")) {
-      return u.pathname.replace("/", "");
-    }
+          if (u.searchParams.get("v")) {
+            return u.searchParams.get("v");
+          }
 
-    // youtube.com/watch?v=<id>
-    if (u.searchParams.get("v")) {
-      return u.searchParams.get("v");
-    }
+          const parts = u.pathname.split("/");
+          return parts.pop() || null;
+        } catch (e) {
+          return null;
+        }
+      }
 
-    // youtube.com/embed/<id> or /shorts/<id>
-    const parts = u.pathname.split("/");
-    return parts.pop() || null;
-  } catch (e) {
-    return null;
-  }
-}
+      function videoEmbedHTML(url) {
+        const yt = youtubeId(url);
+        if (yt) {
+          return `<iframe
+            src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=0&mute=0&controls=1&modestbranding=1&rel=0"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+          ></iframe>`;
+        }
 
-}
+        const vm = vimeoId(url);
+        if (vm) {
+          return `<iframe
+            src="https://player.vimeo.com/video/${vm}?autoplay=0&muted=0&title=0&byline=0&portrait=0"
+            allow="autoplay; fullscreen; picture-in-picture"
+            allowfullscreen
+          ></iframe>`;
+        }
 
-function videoEmbedHTML(url) {
-  const yt = youtubeId(url);
-  if (yt) {
-    return `<iframe
-      src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=0&mute=0&controls=1&modestbranding=1&rel=0"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowfullscreen
-    ></iframe>`;
-  }
-
-  const vm = vimeoId(url);
-  if (vm) {
-    return `<iframe
-      src="https://player.vimeo.com/video/${vm}?autoplay=0&muted=0&title=0&byline=0&portrait=0"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowfullscreen
-    ></iframe>`;
-  }
-
-  return null;
-}
-
-
-  // Examples handled:
-  // https://www.youtube.com/watch?v=VIDEOID
-  // https://youtu.be/VIDEOID
-  // https://www.youtube.com/embed/VIDEOID
-  // https://www.youtube.com/shorts/VIDEOID
-  const patterns = [
-    /youtube\.com\/watch\?v=([^&]+)/,
-    /youtu\.be\/([^?&]+)/,
-    /youtube\.com\/embed\/([^?&]+)/,
-    /youtube\.com\/shorts\/([^?&]+)/,
-  ];
-
-  for (const p of patterns) {
-    const m = s.match(p);
-    if (m && m[1]) return m[1];
-  }
-  return null;
-}
-
-function videoEmbedHTML(url) {
-  const yt = youtubeId(url);
-  if (yt) {
-    // modestbranding reduces the YouTube logo presence a bit
-    return `<iframe
-      src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=0&mute=0&controls=1&modestbranding=1&rel=0"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowfullscreen
-    ></iframe>`;
-  }
-
-  const vm = vimeoId(url);
-  if (vm) {
-    return `<iframe
-      src="https://player.vimeo.com/video/${vm}?autoplay=0&muted=0&title=0&byline=0&portrait=0"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowfullscreen
-    ></iframe>`;
-  }
-
-  return null;
-}
-
+        return null;
       }
 
       // --- render list
@@ -367,15 +311,10 @@ function videoEmbedHTML(url) {
 
         document.title = `${t} – ${c.title}`;
 
-const url = project?.vimeo_url;
-const embed = videoEmbedHTML(url);
-
-detailVideo.innerHTML = embed
-  ? embed
-  : `<div style="padding:24px;opacity:.7">No video embed</div>`;
-
-
-
+        const embed = videoEmbedHTML(project.vimeo_url);
+        detailVideo.innerHTML = embed
+          ? embed
+          : `<div style="padding:24px;opacity:.7">${c.invalidVideo}</div>`;
       }
 
       function showList() {
@@ -408,28 +347,11 @@ detailVideo.innerHTML = embed
       window.addEventListener("hashchange", route);
 
       // --- init
- (async () => {
-  try {
-    renderFilters();
-    projects = await fetchProjects();
-
-    if (!projects || projects.length === 0) {
-      grid.innerHTML = `<div style="opacity:.7;padding:18px;border:1px solid rgba(255,255,255,.15);border-radius:14px">
-No projects found (Sanity returned 0 results).
-</div>`;
-      return;
-    }
-
-    renderList();
-    route();
-  } catch (e) {
-    console.error(e);
-    grid.innerHTML = `<div style="opacity:.7;padding:18px;border:1px solid rgba(255,255,255,.15);border-radius:14px">
-Error loading projects: ${e?.message || e}
-</div>`;
-  }
-})();
-
+      (async () => {
+        renderFilters();
+        projects = await fetchProjects();
+        renderList();
+        route();
       })();
     </script>
   </body>
