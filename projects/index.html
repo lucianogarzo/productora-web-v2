@@ -217,20 +217,28 @@ function vimeoId(url) {
 
 function youtubeId(url) {
   if (!url) return null;
-  const s = String(url);
 
-  const patterns = [
-    /youtube\.com\/watch\?v=([^&]+)/,
-    /youtu\.be\/([^?&]+)/,
-    /youtube\.com\/embed\/([^?&]+)/,
-    /youtube\.com\/shorts\/([^?&]+)/,
-  ];
+  try {
+    const u = new URL(url);
 
-  for (const p of patterns) {
-    const m = s.match(p);
-    if (m && m[1]) return m[1];
+    // youtu.be/<id>
+    if (u.hostname.includes("youtu.be")) {
+      return u.pathname.replace("/", "");
+    }
+
+    // youtube.com/watch?v=<id>
+    if (u.searchParams.get("v")) {
+      return u.searchParams.get("v");
+    }
+
+    // youtube.com/embed/<id> or /shorts/<id>
+    const parts = u.pathname.split("/");
+    return parts.pop() || null;
+  } catch (e) {
+    return null;
   }
-  return null;
+}
+
 }
 
 function videoEmbedHTML(url) {
