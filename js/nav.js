@@ -1,57 +1,50 @@
-import { getLang, toggleLang } from "/js/site.js";
-
+// js/nav.js
+import { getLang, setLang } from "/js/site.js";
 
 const COPY = {
   es: {
-    brand: "Calabria",
+    home: "Home",
+    projects: "Proyectos",
+    about: "Acerca",
+    contact: "Contacto",
+    lang: "EN",
+  },
+  en: {
+    home: "Home",
     projects: "Projects",
     about: "About",
     contact: "Contact",
     lang: "ES",
-    footer: "© " + new Date().getFullYear() + " Calabria. All rights reserved.",
   },
-  en: {
-    brand: "Calabria",
-    projects: "Projects",
-    about: "About",
-    contact: "Contact",
-    lang: "EN",
-    footer: "© " + new Date().getFullYear() + " Calabria. All rights reserved.",
-  }
 };
 
 export function mountNav() {
   const lang = getLang();
   const c = COPY[lang];
 
-  document.body.insertAdjacentHTML(
-    "afterbegin",
-    `
-    <div class="nav">
-      <div class="container nav-inner">
-        <a class="brand" href="/">${c.brand}</a>
-        <div class="menu">
-          <a href="/projects/">${c.projects}</a>
-          <a href="/about.html">${c.about}</a>
-          <a href="/contact.html">${c.contact}</a>
-          <button class="btn" id="langBtn">${c.lang}</button>
-        </div>
-      </div>
+  const nav = document.createElement("header");
+  nav.className = "nav";
+  nav.innerHTML = `
+    <div class="nav-inner container">
+      <a class="brand" href="/">${c.home}</a>
+
+      <nav class="nav-links">
+        <a href="/projects/">${c.projects}</a>
+        <a href="/about.html">${c.about}</a>
+        <a href="/contact.html">${c.contact}</a>
+        <button class="lang" id="langBtn" aria-label="language">${c.lang}</button>
+      </nav>
     </div>
-    `
-  );
+  `;
 
-  document.body.insertAdjacentHTML(
-    "beforeend",
-    `
-    <footer class="footer">
-      <div class="container">${c.footer}</div>
-    </footer>
-    `
-  );
+  document.body.prepend(nav);
 
-  document.getElementById("langBtn").addEventListener("click", () => {
-    toggleLang();
-    location.reload(); // simple y efectivo para sitio estático
-  });
+  const btn = document.getElementById("langBtn");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      const next = lang === "es" ? "en" : "es";
+      setLang(next);
+      location.reload();
+    });
+  }
 }
