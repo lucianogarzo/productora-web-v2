@@ -1,3 +1,5 @@
+// js/sanity.js (ESTABLE)
+
 export const SANITY_PROJECT_ID = "u233mkcr";
 export const SANITY_DATASET = "production";
 export const SANITY_API_VERSION = "2023-08-01";
@@ -8,16 +10,20 @@ async function sanityFetch(query, params = {}) {
   const url = new URL(BASE);
   url.searchParams.set("query", query);
 
-  // Sanity params (strings must be JSON encoded -> quoted)
+  // Params must be JSON encoded so strings are quoted
   for (const [k, v] of Object.entries(params)) {
     url.searchParams.set(`$${k}`, JSON.stringify(v));
   }
 
-  const res = await fetch(url.toString(), { headers: { Accept: "application/json" } });
-  const data = await res.json().catch(() => null);
+  const res = await fetch(url.toString(), {
+    method: "GET",
+    headers: { Accept: "application/json" },
+  });
 
-  if (!res.ok || !data) {
-    throw new Error(`Sanity request failed (${res.status})`);
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.error?.description || `Sanity error ${res.status}`);
   }
 
   return data.result;
@@ -46,8 +52,8 @@ export async function fetchProjectBySlug(slug) {
       vimeo_url,
       description_es, description_en,
       featured, order,
-      "thumbnail": thumbnail.asset->url,
-      "gallery": gallery[].asset->url
+      "thumbnail": thumbnail.asset->url
     }
+  `;
   return sanityFetch(query, { slug });
 }
