@@ -157,7 +157,7 @@
     (async () => {
       try{
         const projects = await fetchProjects();
-        const featured = projects.filter(p => p.featured).slice(0, 6);
+        const featured = projects.filter(p => p.featured).slice(0, 8);
 
         featuredGrid.innerHTML = featured.map(p => `
           <a class="card" href="/projects/#/${encodeURIComponent(p.slug)}">
