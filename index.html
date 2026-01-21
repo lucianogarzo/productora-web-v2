@@ -1,166 +1,39 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <meta name="robots" content="index,follow" />
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Calabria</title>
-  <link rel="stylesheet" href="/css/style.css"/>
-<link rel="canonical" href="https://www.bycalabria.com/" />
 
-  <meta name="description" content="Productora audiovisual. Dirección, producción y post. Estética cinematográfica para marcas y artistas." />
+  <meta property="og:title" content="Calabria" />
+  <meta property="og:description" content="Productora audiovisual." />
+  <meta property="og:image" content="/assets/og.jpg" />
+  <meta name="theme-color" content="#ffffff" />
 
-<!-- Open Graph / WhatsApp -->
-<meta property="og:type" content="website" />
-<meta property="og:title" content="Calabria" />
-<meta property="og:description" content="Dirección, producción y post. Estética cinematográfica para marcas y artistas." />
-<meta property="og:image" content="https://productora-web-v2.pages.dev/assets/og.jpg" />
-<meta property="og:url" content="https://productora-web-v2.pages.dev/" />
+  <link rel="icon" href="/assets/favicon.png" />
 
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image" />
-
-<!-- Favicon -->
-<link rel="icon" href="/assets/favicon.png" />
-
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="/css/styles.css" />
 
   <style>
-    /* HOME specific */
-    .hero-wrap{
-      padding-top: 28px;
-      padding-bottom: 22px;
-    }
-
-    .hero-card{
+    /* Fullscreen reel */
+    .hero-reel{
       position: relative;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
+      height: 100vh;
       overflow: hidden;
-      background: #050505;
+      background: #000;
     }
 
-    /* video container ready for reel */
-    .reel{
-      position: relative;
-      width: 100%;
-      height: min(78vh, 720px);
-      background: #040404;
-    }
-
-    .reel .placeholder{
-      position:absolute; inset:0;
-      display:flex; align-items:center; justify-content:center;
-      color: var(--muted2);
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      font-size: 12px;
-      <video autoplay muted loop playsinline preload="metadata">
-  <source src="/assets/reel.mp4" type="video/mp4">
-</video>
-
-    }
-
-    /* gradient overlay for cinematic look */
-    .reel::after{
-      content:"";
-      position:absolute; inset:0;
-      background: linear-gradient(
-        to top,
-        rgba(0,0,0,.88),
-        rgba(0,0,0,.35) 35%,
-        rgba(0,0,0,.12) 65%,
-        rgba(0,0,0,0)
-      );
-      pointer-events:none;
-    }
-
-    /* copy over reel */
-    .hero-copy{
+    .hero-reel video{
       position:absolute;
-      left:0; right:0; bottom:0;
-      padding: 22px;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit: cover;
     }
 
-    .hero-copy-inner{
-      display:flex;
-      justify-content: space-between;
-      align-items: flex-end;
-      gap: 18px;
-      flex-wrap: wrap;
-    }
-
-    .headline{
-      font-size: 44px;
-      line-height: 1.03;
-      margin: 0 0 10px;
-      letter-spacing: .2px;
-      max-width: 20ch;
-    }
-
-    .subcopy{
-      margin: 0;
-      color: rgba(255,255,255,.78);
-      max-width: 72ch;
-      line-height: 1.45;
-    }
-
-    .cta-row{
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content:flex-end;
-      padding-bottom: 2px;
-    }
-
-    .cta{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-      padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.2);
-      background: rgba(255,255,255,.08);
-      color: var(--fg);
-      cursor:pointer;
-      font-size: 14px;
-      opacity: .95;
-      white-space: nowrap;
-    }
-    .cta:hover{ opacity: 1; background: rgba(255,255,255,.12); }
-
-    .cta.primary{
-      background: rgba(255,255,255,.18);
-      border-color: rgba(255,255,255,.28);
-    }
-
-    .chips{
-      display:flex;
-      gap:10px;
-      flex-wrap: wrap;
-      margin-top: 14px;
-      color: var(--muted2);
-      font-size: 13px;
-    }
-    .chip{
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      padding: 7px 10px;
-      background: rgba(255,255,255,.05);
-    }
-
-    .sec-head{
-      display:flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 18px;
-    }
-
-    .see-all{
-      color: var(--muted);
-      font-size: 14px;
-    }
+    /* hide scroll gap if nav fixed adds padding */
+    main{ padding-top: 0 !important; }
   </style>
 </head>
 
@@ -170,111 +43,51 @@
     mountNav();
   </script>
 
-  <main class="container">
-    <!-- HERO -->
-    <section class="hero-wrap">
-      <div class="hero-card">
+  <!-- FULLSCREEN REEL (NO TEXT OVERLAY) -->
+  <section class="hero-reel">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src="/assets/reel.mp4" type="video/mp4" />
+    </video>
+  </section>
 
-        <!-- ✅ Reel placeholder -->
-        <div class="reel" id="reel">
-          <div class="placeholder" id="reelPlaceholder">REEL PLACEHOLDER</div>
-        </div>
+  <!-- FEATURED PROJECTS (keeps your site useful even without scrolling) -->
+  <main class="container" style="padding: 48px 0;">
+    <section id="featured">
+      <h2 style="margin:0 0 18px; letter-spacing:.08em; text-transform:uppercase; font-size:12px; opacity:.75;">
+        Featured
+      </h2>
 
-        <!-- copy -->
-        <div class="hero-copy">
-          <div class="hero-copy-inner">
-            <div>
-              <h1 class="headline display" id="heroTitle">
-Cine para marcas y artistas.</h1>
-              <p class="subcopy" id="heroSubtitle">
-                Dirección, producción y post. Estética cinematográfica con ejecución ágil.
-              </p>
-
-              <div class="chips" id="chips">
-                <span class="chip">Commercials</span>
-                <span class="chip">Videoclips</span>
-                <span class="chip">Documentary</span>
-                <span class="chip">Post</span>
-              </div>
-            </div>
-
-            <div class="cta-row">
-              <a class="cta primary" href="/projects/" id="ctaProjects">Ver Proyectos</a>
-              <a class="cta" href="/contact.html" id="ctaContact">Contacto</a>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- FEATURED -->
-    <section class="section">
-      <div class="sec-head">
-        <h2 class="h2" id="featuredTitle">Destacados</h2>
-        <a class="see-all" href="/projects/" id="seeAll">Ver todo →</a>
-      </div>
-
-      <div style="height: 14px"></div>
-
-      <div class="grid" id="featuredGrid"></div>
+      <div id="featuredGrid" class="grid"></div>
     </section>
   </main>
 
   <script type="module">
-    import { getLang } from "/js/site.js";
     import { fetchProjects } from "/js/sanity.js";
+    import { getLang } from "/js/site.js";
 
     const lang = getLang();
-
-    const COPY = {
-      es: {
-        title: "Cine para marcas y artistas.",
-        subtitle: "Dirección, producción y post. Estética cinematográfica con ejecución ágil.",
-        ctaProjects: "Ver Projectos",
-        ctaContact: "Contacto",
-        featured: "Destacados",
-        seeAll: "Ver todo →",
-        reel: "REEL PLACEHOLDER"
-      },
-      en: {
-        title: "Cinema for brands and artists.",
-        subtitle: "Direction, production and post. Cinematic aesthetics with fast execution.",
-        ctaProjects: "See Projects",
-        ctaContact: "Contact",
-        featured: "Featured",
-        seeAll: "See all →",
-        reel: "REEL PLACEHOLDER"
-      }
-    };
-
-    const c = COPY[lang];
-
-    document.getElementById("heroTitle").textContent = c.title;
-    document.getElementById("heroSubtitle").textContent = c.subtitle;
-    document.getElementById("ctaProjects").textContent = c.ctaProjects;
-    document.getElementById("ctaContact").textContent = c.ctaContact;
-    document.getElementById("featuredTitle").textContent = c.featured;
-    document.getElementById("seeAll").textContent = c.seeAll;
-    document.getElementById("reelPlaceholder").textContent = c.reel;
+    const grid = document.getElementById("featuredGrid");
 
     function titleFor(p){ return lang === "es" ? p.title_es : p.title_en; }
 
-    const featuredGrid = document.getElementById("featuredGrid");
-
     (async () => {
-      const projects = await fetchProjects();
-      const featured = projects.filter(p => p.featured).slice(0, 6);
+      try {
+        const projects = await fetchProjects();
+        const featured = (projects || []).filter(p => p.featured).slice(0, 9);
 
-      featuredGrid.innerHTML = featured.map(p => `
-        <a class="card" href="/projects/#/${encodeURIComponent(p.slug)}">
-          <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy"/>
-          <div class="meta">
-            <h3>${titleFor(p)}</h3>
-            <p>${[p.client, p.year].filter(Boolean).join(" • ")}</p>
-          </div>
-        </a>
-      `).join("");
+        grid.innerHTML = featured.map(p => `
+          <a class="card" href="/projects/#/${encodeURIComponent(p.slug)}">
+            <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy" />
+            <div class="meta">
+              <h3 class="display">${titleFor(p)}</h3>
+              <p>${[p.client, p.year].filter(Boolean).join(" • ")}</p>
+            </div>
+          </a>
+        `).join("");
+      } catch(e) {
+        console.error(e);
+        grid.innerHTML = `<div style="padding:14px; opacity:.7;">No se pudo cargar contenido.</div>`;
+      }
     })();
   </script>
 </body>
