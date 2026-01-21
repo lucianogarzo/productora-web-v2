@@ -18,9 +18,12 @@ const COPY = {
   },
 };
 
-export function mountNav() {
-  const lang = getLang();
-  const c = COPY[lang];
+const onScroll = () => {
+  nav.classList.toggle("is-solid", window.scrollY > 30);
+};
+window.addEventListener("scroll", onScroll, { passive: true });
+onScroll(); // IMPORTANTE: corre al cargar
+
 
   const nav = document.createElement("header");
   nav.className = "nav";
