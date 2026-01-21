@@ -27,22 +27,18 @@
 
   <style>
     /* HOME specific */
-    <section class="hero-wrap">
-  <div class="hero-card hero-card-full">
+    .hero-wrap{
+      padding-top: 28px;
+      padding-bottom: 22px;
+    }
 
-    <!-- ✅ Reel FULLSCREEN -->
-    <div class="reel reel-full" id="reel">
-      <video class="reel-video" autoplay muted loop playsinline preload="auto" poster="/assets/og.jpg">
-        <source src="/assets/reel.mp4" type="video/mp4" />
-      </video>
-    </div>
-
-    <!-- ✅ copy hidden (keeps layout stable, avoids breaking featured scripts) -->
-    <div class="hero-copy hero-copy-hidden" aria-hidden="true"></div>
-
-  </div>
-</section>
-
+    .hero-card{
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      background: #050505;
+    }
 
     /* video container ready for reel */
     .reel{
@@ -172,15 +168,41 @@
 
   <main class="container">
     <!-- HERO -->
-    <section class="hero-wrap hero-full">
-  <!-- FULLSCREEN REEL -->
-  <div class="reel reel-full" id="reel">
-    <video class="reel-video" autoplay muted loop playsinline preload="auto">
-      <source src="/assets/reel.mp4" type="video/mp4" />
-    </video>
-  </div>
-</section>
+    <section class="hero-wrap">
+      <div class="hero-card">
 
+        <!-- ✅ Reel placeholder -->
+        <div class="reel" id="reel">
+          <div class="placeholder" id="reelPlaceholder">REEL PLACEHOLDER</div>
+        </div>
+
+        <!-- copy -->
+        <div class="hero-copy">
+          <div class="hero-copy-inner">
+            <div>
+              <h1 class="headline display" id="heroTitle">
+Cine para marcas y artistas.</h1>
+              <p class="subcopy" id="heroSubtitle">
+                Dirección, producción y post. Estética cinematográfica con ejecución ágil.
+              </p>
+
+              <div class="chips" id="chips">
+                <span class="chip">Commercials</span>
+                <span class="chip">Videoclips</span>
+                <span class="chip">Documentary</span>
+                <span class="chip">Post</span>
+              </div>
+            </div>
+
+            <div class="cta-row">
+              <a class="cta primary" href="/projects/" id="ctaProjects">Ver Projectos</a>
+              <a class="cta" href="/contact.html" id="ctaContact">Contacto</a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
 
     <!-- FEATURED -->
     <section class="section">
