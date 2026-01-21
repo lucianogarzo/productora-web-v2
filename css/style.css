@@ -188,7 +188,92 @@ body::before{
   transform: translateY(0);
 }
 
+}/* -----------------------------
+   GLOBAL: White theme
+------------------------------ */
+:root{
+  --bg: #ffffff;
+  --text: #0a0a0a;
+  --muted: rgba(10,10,10,.62);
+  --line: rgba(10,10,10,.14);
+  --navSolid: rgba(255,255,255,.92);
 }
+
+html, body{
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* links: no blue */
+a{ color: inherit; }
+a:hover{ opacity: .82; }
+
+/* -----------------------------
+   NAV: transparent → solid on scroll
+------------------------------ */
+header.nav{
+  position: fixed;
+  top:0; left:0; right:0;
+  z-index: 9999;
+  background: transparent;
+  border-bottom: 1px solid transparent;
+  transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+/* solid state */
+header.nav.is-solid{
+  background: var(--navSolid);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 10px 30px rgba(0,0,0,.04);
+  backdrop-filter: blur(12px);
+}
+
+/* make space for fixed nav */
+body{ padding-top: 70px; }
+
+/* nav typography (more elegant) */
+.nav .brand,
+.nav a,
+.nav button{
+  font-family: ui-serif, "Times New Roman", Times, serif;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* nav links spacing */
+.nav-links{
+  display:flex;
+  gap: 18px;
+  align-items:center;
+}
+
+/* remove button default */
+.nav .lang{
+  background: transparent;
+  border: 1px solid var(--line);
+  padding: 7px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+/* -----------------------------
+   CARDS / UI neutral
+------------------------------ */
+.card{
+  border: 1px solid var(--line) !important;
+  background: #fff !important;
+}
+.card p{ color: var(--muted) !important; }
+
+/* headings */
+h1,h2,h3{
+  color: var(--text);
+}
+
 
 .kpi{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted2);font-size:13px}
 .kpi span{border:1px solid var(--line);border-radius:999px;padding:7px 10px;background:rgba(255,255,255,.05)}
