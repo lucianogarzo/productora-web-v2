@@ -27,18 +27,22 @@
 
   <style>
     /* HOME specific */
-    .hero-wrap{
-      padding-top: 28px;
-      padding-bottom: 22px;
-    }
+    <section class="hero-wrap">
+  <div class="hero-card hero-card-full">
 
-    .hero-card{
-      position: relative;
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      overflow: hidden;
-      background: #050505;
-    }
+    <!-- ✅ Reel FULLSCREEN -->
+    <div class="reel reel-full" id="reel">
+      <video class="reel-video" autoplay muted loop playsinline preload="auto" poster="/assets/og.jpg">
+        <source src="/assets/reel.mp4" type="video/mp4" />
+      </video>
+    </div>
+
+    <!-- ✅ copy hidden (keeps layout stable, avoids breaking featured scripts) -->
+    <div class="hero-copy hero-copy-hidden" aria-hidden="true"></div>
+
+  </div>
+</section>
+
 
     /* video container ready for reel */
     .reel{
