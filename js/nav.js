@@ -36,6 +36,13 @@ export function mountNav() {
       </nav>
     </div>
   `;
+  // nav: transparent -> solid on scroll
+  const onScroll = () => {
+    const solid = window.scrollY > 30;
+    nav.classList.toggle("is-solid", solid);
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
 
   document.body.prepend(nav);
 
