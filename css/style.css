@@ -1,106 +1,191 @@
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap");
 
-.kicker {
+/* =========================
+   THEME (White like Ninjas)
+========================= */
+:root{
+  --bg:#ffffff;
+  --fg:#0a0a0a;
+  --muted:rgba(10,10,10,.62);
+  --muted2:rgba(10,10,10,.45);
+  --card:#ffffff;
+  --line:rgba(10,10,10,.14);
+  --radius:18px;
+  --navSolid: rgba(255,255,255,.92);
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--fg);
+  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+  padding-top: 72px; /* para nav fixed */
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+  opacity:.92;
+}
+a:hover{ opacity:1; }
+
+/* =========================
+   TYPO
+========================= */
+.display{
+  font-family: "Bebas Neue", ui-sans-serif;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+}
+
+.kicker{
   font-size: 12px;
   letter-spacing: .22em;
   text-transform: uppercase;
   color: var(--muted2);
 }
 
-:root{
-  --bg:#000;
-  --fg:#fff;
-  --muted:rgba(255,255,255,.7);
-  --muted2:rgba(255,255,255,.45);
-  --card:#0b0b0b;
-  --line:rgba(255,255,255,.14);
-  --radius:18px;
-}
-.display {
-  font-family: "Bebas Neue", ui-sans-serif;
-  letter-spacing: .02em;
-  text-transform: uppercase;
+/* =========================
+   LAYOUT
+========================= */
+.container{
+  max-width:1200px;
+  margin:0 auto;
+  padding:0 22px;
 }
 
-*{box-sizing:border-box}
-html,body{height:100%}
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--fg);
-  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+.section{ padding:56px 0; }
+
+.h1{ font-size:42px; line-height:1.05; margin:0 0 10px; }
+.p{ margin:0; color:var(--muted); max-width:70ch; }
+
+.h2{
+  margin:0 0 16px;
+  font-size:22px;
+  letter-spacing:.2px;
 }
+
+/* =========================
+   NAV (transparent -> solid)
+========================= */
+header.nav{
+  position: fixed;
+  top:0; left:0; right:0;
+  z-index: 9999;
+  background: transparent;
+  border-bottom:1px solid transparent;
+  transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
 
-a{color:var(--fg);text-decoration:none;opacity:.92}
-a:hover{opacity:1}
-
-.container{max-width:1200px;margin:0 auto;padding:0 22px}
-
-.nav{
-  position:sticky;top:0;z-index:50;
-  backdrop-filter: blur(14px);
-  background:rgba(0,0,0,.55);
+header.nav.is-solid{
+  background: var(--navSolid);
   border-bottom:1px solid var(--line);
+  box-shadow: 0 10px 30px rgba(0,0,0,.04);
+  backdrop-filter: blur(12px);
 }
+
 .nav-inner{
-  height:72px;display:flex;align-items:center;justify-content:space-between;
+  height:72px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
-.brand{font-weight:600;letter-spacing:.2px}
-.menu{display:flex;gap:16px;align-items:center}
+
+/* nav typography more elegant */
+.brand,
+.menu a,
+.menu button{
+  font-family: ui-serif, "Times New Roman", Times, serif;
+  letter-spacing:.08em;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fg);
+}
+
+.menu{
+  display:flex;
+  gap:16px;
+  align-items:center;
+}
+
 .btn{
   border:1px solid var(--line);
-  background:rgba(255,255,255,.06);
-  padding:9px 11px;border-radius:12px;
-  color:var(--fg);cursor:pointer;
+  background:rgba(255,255,255,.65);
+  padding:9px 11px;
+  border-radius:12px;
+  color:var(--fg);
+  cursor:pointer;
 }
-.btn:hover{background:rgba(255,255,255,.1)}
+.btn:hover{ background:rgba(255,255,255,.85); }
 
-.hero{
-  min-height:78vh;
-  display:flex;align-items:center;
+/* =========================
+   HERO / REEL
+========================= */
+.hero-wrap{
+  padding: 0;
 }
+
 .hero-card{
   width:100%;
   border:1px solid var(--line);
   border-radius: var(--radius);
   overflow:hidden;
-  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  background: var(--card);
 }
-.hero-media{
-  position:relative;
-  width:100%;
-  padding-top:56.25%;
-  background:#050505;
-}
-.hero-media .placeholder{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--muted2);
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  font-size:12px;
-}
-.hero-copy{
-  padding:22px 22px 26px;
-}
-.h1{font-size:42px;line-height:1.05;margin:0 0 10px}
-.p{margin:0;color:var(--muted);max-width:70ch}
 
-.section{padding:56px 0}
-.h2{margin:0 0 16px;font-size:22px;letter-spacing:.2px}
+/* This makes the reel fullscreen without breaking other sections */
+.hero-card.hero-card-full{
+  position: relative;
+  height: calc(100vh - 72px); /* nav height */
+  min-height: 560px;
+}
+
+/* Reel container */
+.reel{
+  width:100%;
+  height:100%;
+  background:#000;
+}
+
+.reel.reel-full{
+  position:absolute;
+  inset:0;
+}
+
+/* video */
+.reel-video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit: cover;
+}
+
+/* Hide copy for fullscreen reel */
+.hero-copy.hero-copy-hidden{
+  display:none !important;
+}
+
+/* =========================
+   GRID / CARDS
+========================= */
 .grid{
   display:grid;
   gap:14px;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
 }
-/* --- Cinematic cards --- */
+
+/* Cinematic card (adapted for white theme) */
 .card{
   position: relative;
   overflow: hidden;
   border-radius: var(--radius);
   border: 1px solid var(--line);
-  background: rgba(255,255,255,.02);
+  background: #fff;
   transform: translateZ(0);
 }
 
@@ -111,15 +196,15 @@ a:hover{opacity:1}
   aspect-ratio: 16 / 10;
   object-fit: cover;
   transition: transform .6s cubic-bezier(.2,.8,.2,1), opacity .6s;
-  opacity: .92;
+  opacity: .95;
 }
 
 .card::after{
   content:"";
   position:absolute;
   inset:0;
-  background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.08) 55%, rgba(0,0,0,0));
-  opacity: .9;
+  background: linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,.06) 55%, rgba(0,0,0,0));
+  opacity: .85;
   transition: opacity .6s;
   pointer-events:none;
 }
@@ -133,42 +218,18 @@ a:hover{opacity:1}
   opacity: 1;
 }
 
-}
 .card .meta{
-  position:absolute;left:0;right:0;bottom:0;
-  padding:14px;
-  background:linear-gradient(to top, rgba(0,0,0,.85), rgba(0,0,0,0));
-}
-.card .meta h3{margin:0;font-size:16px}
-.card .meta p{margin:6px 0 0;color:var(--muted);font-size:13px}
-
-.footer{
-  border-top:1px solid var(--line);
-  padding:26px 0;
-  color:var(--muted2);
-  font-size:13px;
-
-  /* --- Film grain overlay (subtle) --- */
-body::before{
-  content:"";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: .07;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
-}
-
-  .card .meta{
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 14px;
-  z-index: 2;
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:14px;
+  z-index:2;
   transform: translateY(6px);
   transition: transform .6s cubic-bezier(.2,.8,.2,1);
+}
+
+.card:hover .meta{
+  transform: translateY(0);
 }
 
 .card .meta h3{
@@ -176,124 +237,36 @@ body::before{
   font-size: 18px;
   line-height: 1.05;
   font-weight: 600;
+  color:#fff;
 }
 
 .card .meta p{
   margin:8px 0 0;
-  color: rgba(255,255,255,.72);
+  color: rgba(255,255,255,.75);
   font-size: 13px;
 }
 
-.card:hover .meta{
-  transform: translateY(0);
+/* =========================
+   FOOTER
+========================= */
+.footer{
+  border-top:1px solid var(--line);
+  padding:26px 0;
+  color:var(--muted2);
+  font-size:13px;
 }
 
-}/* -----------------------------
-   GLOBAL: White theme
------------------------------- */
-:root{
-  --bg: #ffffff;
-  --text: #0a0a0a;
-  --muted: rgba(10,10,10,.62);
-  --line: rgba(10,10,10,.14);
-  --navSolid: rgba(255,255,255,.92);
-}
-
-html, body{
-  background: var(--bg);
-  color: var(--text);
-}
-
-/* links: no blue */
-a{ color: inherit; }
-a:hover{ opacity: .82; }
-
-/* -----------------------------
-   NAV: transparent → solid on scroll
------------------------------- */
-header.nav{
-  position: fixed;
-  top:0; left:0; right:0;
-  z-index: 9999;
-  background: transparent;
-  border-bottom: 1px solid transparent;
-  transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
-}
-
-/* solid state */
-header.nav.is-solid{
-  background: var(--navSolid);
-  border-bottom: 1px solid var(--line);
-  box-shadow: 0 10px 30px rgba(0,0,0,.04);
-  backdrop-filter: blur(12px);
-}
-
-/* make space for fixed nav */
-body{ padding-top: 70px; }
-
-/* nav typography (more elegant) */
-.nav .brand,
-.nav a,
-.nav button{
-  font-family: ui-serif, "Times New Roman", Times, serif;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text);
-  text-decoration: none;
-}
-
-/* nav links spacing */
-.nav-links{
+/* Optional badges */
+.kpi{
   display:flex;
-  gap: 18px;
-  align-items:center;
+  gap:18px;
+  flex-wrap:wrap;
+  color:var(--muted2);
+  font-size:13px
 }
-
-/* remove button default */
-.nav .lang{
-  background: transparent;
-  border: 1px solid var(--line);
-  padding: 7px 10px;
-  border-radius: 999px;
-  cursor: pointer;
+.kpi span{
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:7px 10px;
+  background: rgba(0,0,0,.02);
 }
-
-/* -----------------------------
-   CARDS / UI neutral
------------------------------- */
-.card{
-  border: 1px solid var(--line) !important;
-  background: #fff !important;
-}
-.card p{ color: var(--muted) !important; }
-
-/* headings */
-h1,h2,h3{
-  color: var(--text);
-}
-
-/* HOME: fullscreen reel */
-.hero-wrap.hero-full{
-  padding: 0 !important;
-  margin: 0 !important;
-}
-
-.reel.reel-full{
-  position: relative;
-  height: 100vh;
-  overflow: hidden;
-  background: #000;
-}
-
-.reel.reel-full .reel-video{
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.kpi{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted2);font-size:13px}
-.kpi span{border:1px solid var(--line);border-radius:999px;padding:7px 10px;background:rgba(255,255,255,.05)}
