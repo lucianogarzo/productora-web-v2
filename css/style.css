@@ -192,3 +192,47 @@ body::before{
 
 .kpi{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted2);font-size:13px}
 .kpi span{border:1px solid var(--line);border-radius:999px;padding:7px 10px;background:rgba(255,255,255,.05)}
+
+/* ===== NAV behavior ===== */
+header.nav{
+  position: fixed !important;
+  top: 0; left: 0; right: 0;
+  z-index: 9999;
+  transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+
+/* Default solid */
+header.nav{
+  background: rgba(255,255,255,.92) !important;
+  border-bottom: 1px solid rgba(10,10,10,.14) !important;
+  backdrop-filter: blur(12px);
+}
+
+/* Solid state (keeps same) */
+header.nav.is-solid{
+  background: rgba(255,255,255,.92) !important;
+  border-bottom: 1px solid rgba(10,10,10,.14) !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,.04);
+}
+
+/* Home: transparent at top */
+body.home header.nav{
+  background: transparent !important;
+  border-bottom: 1px solid transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: blur(0px);
+}
+
+/* Home: once scrolled, becomes solid */
+body.home header.nav.is-solid{
+  background: rgba(255,255,255,.92) !important;
+  border-bottom: 1px solid rgba(10,10,10,.14) !important;
+  box-shadow: 0 10px 30px rgba(0,0,0,.04);
+  backdrop-filter: blur(12px);
+}
+
+/* Default: pages need spacing for fixed nav */
+body{ padding-top: 72px; }
+
+/* Home: NO padding so hero video isn't cut */
+body.home{ padding-top: 0; }
