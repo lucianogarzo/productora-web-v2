@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Contact – Calabria</title>
+  <title>Contacto – Calabria</title>
   <link rel="stylesheet" href="/css/style.css"/>
 
   <meta name="description" content="Contacto – Calabria. Dirección, producción y post." />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="Contact – Calabria" />
+  <meta property="og:title" content="Contacto – Calabria" />
   <meta property="og:description" content="Hablemos. Dirección, producción y post." />
-  <meta property="og:image" content="https://productora-web-v2.pages.dev/assets/og.jpg" />
-  <meta property="og:url" content="https://productora-web-v2.pages.dev/contact.html" />
+  <meta property="og:image" content="https://www.bycalabria.com/assets/og.jpg" />
+  <meta property="og:url" content="https://www.bycalabria.com/contact.html" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="/assets/favicon.png" />
   <link rel="canonical" href="https://www.bycalabria.com/contact.html" />
@@ -24,21 +24,18 @@
       grid-template-columns: 1.05fr .95fr;
       gap: 22px;
     }
-
     @media (max-width: 900px){
       .contact-wrap{ grid-template-columns: 1fr; }
     }
 
+    /* panels */
     .panel{
       border: 1px solid var(--line);
       border-radius: var(--radius);
       background: rgba(255,255,255,.03);
       overflow:hidden;
     }
-
-    .panel-inner{
-      padding: 20px;
-    }
+    .panel-inner{ padding: 20px; }
 
     .kicker{
       font-size: 12px;
@@ -61,50 +58,54 @@
       line-height: 1.5;
     }
 
+    /* right grid */
     .grid-actions{
       display:grid;
       grid-template-columns: 1fr 1fr;
       gap: 12px;
       margin-top: 18px;
     }
-
     @media (max-width: 520px){
       .grid-actions{ grid-template-columns: 1fr; }
     }
 
-    .action{
+    /* ✅ capsule black style (applied to both sides) */
+    .cap{
       display:flex;
       flex-direction: column;
       gap: 8px;
       padding: 14px;
       border-radius: 16px;
-      border: 1px solid var(--line);
-      background: rgba(0,0,0,.25);
+      border: 1px solid rgba(0,0,0,.55);
+      background: #0a0a0a;
+      color: #fff;
       cursor: pointer;
-      transition: transform .25s ease, background .25s ease, border-color .25s ease;
+      text-decoration: none;
+      transition: transform .22s ease, border-color .22s ease, opacity .22s ease;
     }
-    .action:hover{
+    .cap:hover{
       transform: translateY(-2px);
-      background: rgba(255,255,255,.06);
-      border-color: rgba(255,255,255,.2);
+      border-color: rgba(255,255,255,.22);
+      opacity: .98;
     }
 
-    .action .label{
+    .cap .label{
       font-size: 12px;
       letter-spacing: .18em;
       text-transform: uppercase;
-      color: var(--muted2);
+      color: rgba(255,255,255,.62);
     }
-    .action .value{
+    .cap .value{
       font-size: 16px;
-      color: var(--fg);
+      color: #fff;
     }
-    .action .hint{
+    .cap .hint{
       font-size: 13px;
-      color: var(--muted);
+      color: rgba(255,255,255,.62);
       margin-top: 2px;
     }
 
+    /* left CTA row */
     .btnrow{
       display:flex;
       gap: 10px;
@@ -112,37 +113,34 @@
       margin-top: 18px;
     }
 
+    /* left buttons same style as right capsules */
     .btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
       gap:8px;
       padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.2);
-      background: rgba(255,255,255,.08);
-      color: var(--fg);
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.55);
+      background: #0a0a0a;
+      color: #fff;
       cursor:pointer;
       font-size: 14px;
-      opacity: .95;
+      text-decoration: none;
+      transition: transform .22s ease, border-color .22s ease, opacity .22s ease;
+      opacity: .96;
       white-space: nowrap;
     }
-    .btn:hover{ opacity:1; background: rgba(255,255,255,.12); }
-
-    .btn.primary{
-      background: rgba(255,255,255,.18);
-      border-color: rgba(255,255,255,.28);
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.22);
+      opacity: 1;
     }
 
     .note{
       margin-top: 14px;
       font-size: 13px;
       color: var(--muted);
-    }
-
-    .mini{
-      font-size: 12px;
-      color: var(--muted2);
     }
 
     .toast{
@@ -152,9 +150,9 @@
       transform: translateX(-50%);
       padding: 10px 12px;
       border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.18);
-      background: rgba(10,10,10,.9);
-      color: rgba(255,255,255,.9);
+      border: 1px solid rgba(0,0,0,.25);
+      background: rgba(10,10,10,.92);
+      color: rgba(255,255,255,.92);
       font-size: 13px;
       opacity: 0;
       pointer-events: none;
@@ -173,17 +171,20 @@
 
   <main class="container">
     <section class="contact-wrap">
+
       <!-- LEFT -->
       <div class="panel">
         <div class="panel-inner">
-          <div class="kicker" id="kicker">Contact</div>
+          <div class="kicker" id="kicker">Contacto</div>
+
           <h1 class="big-title display" id="title">Hablemos.</h1>
+
           <p class="lead" id="lead">
             Para presupuestos, nuevos proyectos o colaboraciones, escribinos y te respondemos rápido.
           </p>
 
           <div class="btnrow">
-            <a class="btn primary" id="btnEmail" href="#">Enviar email</a>
+            <a class="btn" id="btnEmail" href="#">Enviar email</a>
             <a class="btn" id="btnWhatsApp" href="#" target="_blank" rel="noreferrer">WhatsApp</a>
             <a class="btn" id="btnIG" href="#" target="_blank" rel="noreferrer">Instagram</a>
           </div>
@@ -197,39 +198,38 @@
       <!-- RIGHT -->
       <div class="panel">
         <div class="panel-inner">
-          <div class="kicker" id="kicker2">Direct</div>
+          <div class="kicker" id="kicker2">Directo</div>
 
           <div class="grid-actions">
-            <button class="action" id="copyEmail">
+            <button class="cap" id="copyEmail" type="button">
               <div class="label" id="emailLabel">Email</div>
               <div class="value" id="emailValue">hola@bycalabria.com</div>
               <div class="hint" id="emailHint">Click para copiar</div>
             </button>
 
-            <button class="action" id="copyPhone">
+            <button class="cap" id="copyPhone" type="button">
               <div class="label" id="waLabel">WhatsApp</div>
               <div class="value" id="waValue">+54 11 0000 0000</div>
               <div class="hint" id="waHint">Click para copiar</div>
             </button>
 
-            <a class="action" id="openProjects" href="/projects/">
-              <div class="label" id="projLabel">Portfolio</div>
-              <div class="value" id="projValue">Ver Projects</div>
+            <a class="cap" id="openProjects" href="/projects/">
+              <div class="label" id="projLabel">Proyectos</div>
+              <div class="value" id="projValue">Ver proyectos</div>
               <div class="hint" id="projHint">Abrir grilla</div>
             </a>
 
-            <a class="action" id="openAbout" href="/about.html">
+            <a class="cap" id="openAbout" href="/about.html">
               <div class="label" id="aboutLabel">Studio</div>
-              <div class="value" id="aboutValue">About</div>
+              <div class="value" id="aboutValue">Acerca</div>
               <div class="hint" id="aboutHint">Conocer más</div>
             </a>
           </div>
 
-          <div class="note mini" id="miniNote">
-            Horario: Lun–Vie 10:00–19:00 (GMT-3)
-          </div>
+          <!-- ✅ horario eliminado -->
         </div>
       </div>
+
     </section>
   </main>
 
@@ -240,14 +240,15 @@
 
     const lang = getLang();
 
-   
     const EMAIL = "hola@bycalabria.com";
-    const PHONE_INTL = "+54 11 4979 8706"; // cambiá por tu número real (con +54)
-    const IG_URL = "https://instagram.com/bycalabria"; // poné tu IG real
+    const PHONE_INTL = "+54 11 4979 8706";
+    const IG_URL = "https://instagram.com/bycalabria";
     const WHATSAPP_TEXT = "Hola! Quería consultar por un proyecto audiovisual.";
 
     const COPY = {
       es: {
+        kicker1: "Contacto",
+        kicker2: "Directo",
         title: "Hablemos.",
         lead: "Para presupuestos, nuevos proyectos o colaboraciones, escribinos y te respondemos rápido.",
         note: "También podés copiar el mail o el WhatsApp tocando las tarjetas de la derecha.",
@@ -255,9 +256,10 @@
         emailHint: "Click para copiar",
         waLabel: "WhatsApp",
         waHint: "Click para copiar",
-        projValue: "Ver Projects",
+        projLabel: "Proyectos",
+        projValue: "Ver proyectos",
         projHint: "Abrir grilla",
-        aboutValue: "About",
+        aboutValue: "Acerca",
         aboutHint: "Conocer más",
         toast: "Copiado ✓",
         btnEmail: "Enviar email",
@@ -265,6 +267,8 @@
         btnIG: "Instagram",
       },
       en: {
+        kicker1: "Contact",
+        kicker2: "Direct",
         title: "Let’s talk.",
         lead: "For budgets, new projects or collaborations, send a message and we’ll reply fast.",
         note: "You can also copy the email or WhatsApp by clicking the cards on the right.",
@@ -272,7 +276,8 @@
         emailHint: "Click to copy",
         waLabel: "WhatsApp",
         waHint: "Click to copy",
-        projValue: "See Projects",
+        projLabel: "Projects",
+        projValue: "See projects",
         projHint: "Open grid",
         aboutValue: "About",
         aboutHint: "Learn more",
@@ -283,9 +288,11 @@
       }
     };
 
-    const c = COPY[lang];
+    const c = COPY[lang] || COPY.es;
 
     // text
+    document.getElementById("kicker").textContent = c.kicker1;
+    document.getElementById("kicker2").textContent = c.kicker2;
     document.getElementById("title").textContent = c.title;
     document.getElementById("lead").textContent = c.lead;
     document.getElementById("note").textContent = c.note;
@@ -293,6 +300,7 @@
     document.getElementById("emailHint").textContent = c.emailHint;
     document.getElementById("waLabel").textContent = c.waLabel;
     document.getElementById("waHint").textContent = c.waHint;
+    document.getElementById("projLabel").textContent = c.projLabel;
     document.getElementById("projValue").textContent = c.projValue;
     document.getElementById("projHint").textContent = c.projHint;
     document.getElementById("aboutValue").textContent = c.aboutValue;
@@ -311,7 +319,7 @@
     document.getElementById("btnWhatsApp").href = waUrl;
     document.getElementById("btnIG").href = IG_URL;
 
-    // copy helpers
+    // toast
     const toast = document.getElementById("toast");
     function showToast(msg){
       toast.textContent = msg;
@@ -325,7 +333,7 @@
         await navigator.clipboard.writeText(t);
         showToast(c.toast);
       }catch(e){
-        showToast("Copy failed");
+        showToast(lang === "es" ? "No se pudo copiar" : "Copy failed");
       }
     }
 
