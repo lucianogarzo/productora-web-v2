@@ -279,3 +279,71 @@ body.home header.nav:not(.is-solid) .nav-links button{
 @media (max-width: 560px){
   .brands-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+/* =============================
+   GLOBAL UI (Capsules / Buttons)
+   Calabria – unified system
+   (Safe overrides, appended last)
+============================= */
+
+/* Capsule black */
+.cap{
+  border: 1px solid rgba(0,0,0,.55);
+  border-radius: 16px;
+  background: #0a0a0a;
+  color: rgba(255,255,255,.92);
+  padding: 14px;
+}
+
+/* For clickable capsules */
+.cap-hover{
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform .22s ease, border-color .22s ease, opacity .22s ease;
+}
+.cap-hover:hover{
+  transform: translateY(-2px);
+  border-color: rgba(255,255,255,.22);
+  opacity: .98;
+}
+
+/* Capsule typography */
+.cap .label{
+  font-size: 12px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.62);
+  margin-bottom: 6px;
+}
+.cap .value{
+  font-size: 16px;
+  color: #fff;
+}
+.cap .hint{
+  font-size: 13px;
+  color: rgba(255,255,255,.62);
+  margin-top: 2px;
+}
+
+/* Button black pill */
+.btn-black{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(0,0,0,.55);
+  background: #0a0a0a;
+  color: #fff;
+  cursor:pointer;
+  font-size: 14px;
+  opacity: .96;
+  white-space: nowrap;
+  text-decoration:none;
+  transition: transform .22s ease, border-color .22s ease, opacity .22s ease;
+}
+.btn-black:hover{
+  transform: translateY(-1px);
+  border-color: rgba(255,255,255,.22);
+  opacity: 1;
+}
