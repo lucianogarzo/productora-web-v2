@@ -8,26 +8,17 @@ const API_VERSION = "2023-08-01";
 const BASE_URL = `https://${PROJECT_ID}.api.sanity.io/v${API_VERSION}/data/query/${DATASET}`;
 
 /**
- * Sanity expects params as individual querystring values:
- * Example: &"$slug"="parense-de-manos-2025"
- *
- * This helper sets: query=<groq>&$slug="value"&$other=123
+ * Sanity parameters must be provided individually:
+ * query=...&$slug="value"&$other=123
  */
 export async function sanityFetch(query, params = {}) {
   const url = new URL(BASE_URL);
   url.searchParams.set("query", query);
 
-  // Add params as $paramName. Strings MUST be quoted.
+  // ✅ IMPORTANT: do NOT use $params
+  // Provide each param as $paramName
   for (const [key, value] of Object.entries(params)) {
-    const paramKey = `$${key}`;
-
-    if (typeof value === "string") {
-      // quote strings
-      url.searchParams.set(paramKey, JSON.stringify(value));
-    } else {
-      // numbers/booleans/objects
-      url.searchParams.set(paramKey, JSON.stringify(value));
-    }
+    url.searchParams.set(`$${key}`, JSON.stringify(value));
   }
 
   const res = await fetch(url.toString());
