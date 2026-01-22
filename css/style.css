@@ -1,53 +1,41 @@
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap");
 
 /* =====================
-   VARIABLES
+   BASE
 ===================== */
 :root{
   --bg:#ffffff;
   --fg:#0a0a0a;
   --muted:rgba(10,10,10,.62);
-  --muted2:rgba(10,10,10,.45);
   --line:rgba(10,10,10,.14);
   --radius:18px;
 }
 
-/* =====================
-   RESET / BASE
-===================== */
 *{box-sizing:border-box}
 html,body{height:100%}
+
 body{
   margin:0;
   background:var(--bg);
   color:var(--fg);
-  font-family:"Inter", system-ui, -apple-system, BlinkMacSystemFont, Arial;
-  padding-top:72px; /* espacio nav fijo */
+  font-family:"Inter", system-ui, -apple-system, Arial;
+  padding-top:72px;
 }
+
 body.home{ padding-top:0; }
 
-a{ color:inherit; text-decoration:none; opacity:.9; }
+a{ color:inherit; text-decoration:none; opacity:.92; }
 a:hover{ opacity:1; }
 
-/* =====================
-   TYPO
-===================== */
-.display{
-  font-family:"Bebas Neue", sans-serif;
-  letter-spacing:.02em;
-  text-transform:uppercase;
-}
-.h2{ margin:0 0 16px; font-size:22px; }
-
-/* =====================
-   LAYOUT
-===================== */
 .container{
   max-width:1200px;
   margin:0 auto;
   padding:0 22px;
 }
+
 .section{ padding:56px 0; }
+
+.h2{ margin:0; font-size:22px; }
 
 /* =====================
    NAV
@@ -59,10 +47,9 @@ header.nav{
   height:72px;
   display:flex;
   align-items:center;
-
   background:rgba(255,255,255,.92);
   border-bottom:1px solid var(--line);
-  transition:background .25s ease, box-shadow .25s ease, border-color .25s ease, backdrop-filter .25s ease;
+  transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
 }
 
 header.nav.is-solid{
@@ -72,7 +59,7 @@ header.nav.is-solid{
   backdrop-filter: blur(12px);
 }
 
-/* HOME top state */
+/* Home top: no bar, only text */
 body.home header.nav{
   background:transparent;
   border-bottom:1px solid transparent;
@@ -80,7 +67,7 @@ body.home header.nav{
   backdrop-filter:none;
 }
 
-/* HOME scrolled state */
+/* Home scrolled: solid bar */
 body.home header.nav.is-solid{
   background:rgba(255,255,255,.92);
   border-bottom:1px solid var(--line);
@@ -91,15 +78,18 @@ body.home header.nav.is-solid{
 .nav-inner{
   width:100%;
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
 }
 
-.brand{
-  font-family:ui-serif, Georgia, "Times New Roman", serif;
-  font-size:12px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
+.brand,
+.nav-links a,
+.nav-links button{
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  font-size: 12px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color:#0a0a0a;
 }
 
 .nav-links{
@@ -108,44 +98,30 @@ body.home header.nav.is-solid{
   align-items:center;
 }
 
-.nav-links a,
 .nav-links button{
-  font-family:ui-serif, Georgia, "Times New Roman", serif;
-  font-size:12px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
   background:none;
   border:none;
   cursor:pointer;
   padding:0;
 }
 
-/* default solid: black */
-header.nav .brand,
-header.nav .nav-links a,
-header.nav .nav-links button{ color:#0a0a0a; }
-
-/* home top: white */
+/* White nav text only when home & top */
 body.home header.nav:not(.is-solid) .brand,
 body.home header.nav:not(.is-solid) .nav-links a,
 body.home header.nav:not(.is-solid) .nav-links button{
-  color:#ffffff;
-  text-shadow: 0 2px 18px rgba(0,0,0,.35);
+  color:#fff;
+  text-shadow:0 2px 18px rgba(0,0,0,.35);
 }
 
 /* =====================
-   HERO / REEL (FIXED)
+   HERO FULLSCREEN (FIXED)
 ===================== */
-.hero-wrap{ margin:0; }
-
-/* uses modern viewport units to avoid black bars */
-.hero-card{
+.hero{
   position:relative;
   width:100%;
   height:100vh;
-  height:100svh; /* mobile safe */
-  height:100dvh; /* dynamic viewport */
-  min-height:560px;
+  height:100svh;
+  height:100dvh;
   overflow:hidden;
   background:#000;
 }
@@ -157,25 +133,29 @@ body.home header.nav:not(.is-solid) .nav-links button{
   background:#000;
 }
 
-/* Critical fix: center + overscan so no black bars */
-.reel video{
+.reel-video{
   position:absolute;
-  top:50%;
-  left:50%;
+  inset:0;
   width:100%;
   height:100%;
-  transform:translate(-50%,-50%);
   object-fit:cover;
-  object-position:center center;
-  background:#000;
+  object-position:center;
+  display:block;
 }
 
-/* If the source has thin bars, this subtle overscan hides them */
-@supports (object-fit: cover){
-  .reel video{
-    width:101%;
-    height:101%;
-  }
+/* =====================
+   FEATURED SECTION HEADER
+===================== */
+.sec-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:18px;
+}
+
+.see-all{
+  color:var(--muted);
+  font-size:14px;
 }
 
 /* =====================
@@ -187,66 +167,115 @@ body.home header.nav:not(.is-solid) .nav-links button{
   grid-template-columns:repeat(auto-fit, minmax(230px,1fr));
 }
 
-/* cinematic card */
 .card{
   position:relative;
   overflow:hidden;
   border-radius:var(--radius);
   border:1px solid var(--line);
   background:#fff;
-  transform: translateZ(0);
+  transform:translateZ(0);
 }
 
-/* image + zoom hover */
 .card img{
   width:100%;
+  height:100%;
   aspect-ratio:16/10;
   object-fit:cover;
   display:block;
-  transform: scale(1);
-  transition: transform .6s cubic-bezier(.2,.8,.2,1), opacity .6s;
-  opacity: .96;
+  transform:scale(1);
+  transition:transform .6s cubic-bezier(.2,.8,.2,1), opacity .6s;
+  opacity:.96;
 }
 
 .card:hover img{
-  transform: scale(1.06);
-  opacity: 1;
+  transform:scale(1.06);
+  opacity:1;
 }
 
-/* overlay gradient */
 .card::after{
   content:"";
   position:absolute;
   inset:0;
-  background:linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.20) 55%, rgba(0,0,0,0));
+  background:linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.2) 55%, rgba(0,0,0,0));
   opacity:.95;
-  transition: opacity .6s;
+  transition:opacity .6s;
   pointer-events:none;
 }
-.card:hover::after{ opacity:1; }
 
-/* meta */
 .card .meta{
   position:absolute;
   left:14px;
   right:14px;
   bottom:14px;
   color:#fff;
-  transform: translateY(6px);
-  transition: transform .6s cubic-bezier(.2,.8,.2,1);
 }
-.card:hover .meta{ transform: translateY(0); }
 
-/* titles whiter */
 .card .meta h3{
   margin:0;
   font-size:18px;
   line-height:1.05;
   font-weight:600;
-  color: rgba(255,255,255,1);
+  color:rgba(255,255,255,1);
 }
+
 .card .meta p{
   margin:8px 0 0;
   font-size:13px;
-  color: rgba(255,255,255,.82);
+  color:rgba(255,255,255,.82);
+}
+
+/* =====================
+   BRANDS BLOCK
+===================== */
+.brands{
+  margin: 12px 0 70px;
+  border-radius: 26px;
+  padding: 56px 0;
+  background: #1b1c1f;
+  color: #fff;
+}
+
+.brands-inner{
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 22px;
+}
+
+.brands-title{
+  margin: 0 0 28px;
+  text-align:center;
+  font-family: "Inter", system-ui, -apple-system, Arial;
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: .2px;
+}
+
+.brands-grid{
+  display:grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 26px 28px;
+  align-items:center;
+  justify-items:center;
+}
+
+.brands-grid img{
+  max-width: 160px;
+  width: 100%;
+  height: auto;
+  opacity: .92;
+  filter: grayscale(100%);
+  transition: opacity .25s ease, filter .25s ease, transform .25s ease;
+}
+
+.brands-grid img:hover{
+  opacity: 1;
+  filter: grayscale(0%);
+  transform: scale(1.03);
+}
+
+@media (max-width: 900px){
+  .brands-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 560px){
+  .brands-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
