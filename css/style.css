@@ -236,3 +236,35 @@ body{ padding-top: 72px; }
 
 /* Home: NO padding so hero video isn't cut */
 body.home{ padding-top: 0; }
+
+/* ===== PRO NAV COLORS ===== */
+
+/* default links color (solid nav) */
+header.nav .brand,
+header.nav .nav-links a,
+header.nav .nav-links button{
+  color: #0a0a0a;
+}
+
+/* HOME at top: transparent nav with WHITE text */
+body.home header.nav:not(.is-solid) .brand,
+body.home header.nav:not(.is-solid) .nav-links a,
+body.home header.nav:not(.is-solid) .nav-links button{
+  color: #ffffff;
+}
+
+/* nicer hover on video */
+body.home header.nav:not(.is-solid) .nav-links a:hover,
+body.home header.nav:not(.is-solid) .nav-links button:hover{
+  opacity: .85;
+}
+
+/* language button border matches mode */
+header.nav .lang{
+  border-color: rgba(10,10,10,.18) !important;
+}
+
+body.home header.nav:not(.is-solid) .lang{
+  border-color: rgba(255,255,255,.30) !important;
+}
+
