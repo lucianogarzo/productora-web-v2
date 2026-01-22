@@ -4,14 +4,14 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <meta name="robots" content="index,follow" />
-  <title>Calabria</title>
 
+  <title>Calabria</title>
   <link rel="stylesheet" href="/css/style.css"/>
   <link rel="canonical" href="https://www.bycalabria.com/" />
 
   <meta name="description" content="Productora audiovisual. Dirección, producción y post. Estética cinematográfica para marcas y artistas." />
 
-  <!-- Open Graph / WhatsApp -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:title" content="Calabria" />
   <meta property="og:description" content="Dirección, producción y post. Estética cinematográfica para marcas y artistas." />
@@ -20,33 +20,136 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Favicon -->
   <link rel="icon" href="/assets/favicon.png" />
+
+  <style>
+    /* HOME specific */
+    .hero-wrap{
+      padding-top: 0;
+      padding-bottom: 22px;
+    }
+
+    .hero-card{
+      position: relative;
+      border: 0;
+      border-radius: 0;
+      overflow: hidden;
+      background: #000;
+    }
+
+    /* Reel full screen */
+    .reel{
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background: #000;
+      overflow: hidden;
+    }
+
+    .reel video{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+      background:#000;
+    }
+
+    /* Gradient overlay (subtle) */
+    .reel::after{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(
+        to top,
+        rgba(0,0,0,.45),
+        rgba(0,0,0,.18) 35%,
+        rgba(0,0,0,.08) 65%,
+        rgba(0,0,0,0)
+      );
+      pointer-events:none;
+    }
+
+    /* FEATURED head */
+    .sec-head{
+      display:flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 18px;
+    }
+
+    .see-all{
+      color: rgba(10,10,10,.62);
+      font-size: 14px;
+      text-decoration:none;
+    }
+
+    /* BRANDS section */
+    .brands-wrap{
+      padding: 70px 0 40px;
+    }
+
+    .brands-title{
+      margin:0 0 26px;
+      font-size: 22px;
+      letter-spacing:.2px;
+      text-align:center;
+    }
+
+    .brands-grid{
+      display:grid;
+      gap: 26px 34px;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      align-items:center;
+      justify-items:center;
+      padding: 20px 0 0;
+    }
+
+    .brand-item{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:100%;
+      opacity:.95;
+      transition: opacity .25s ease, transform .25s ease;
+      filter: grayscale(100%);
+    }
+    .brand-item:hover{
+      opacity:1;
+      transform: translateY(-2px);
+      filter: grayscale(0%);
+    }
+
+    .brand-item img{
+      max-width: 170px;
+      width:100%;
+      height:auto;
+      display:block;
+      object-fit:contain;
+    }
+  </style>
 </head>
 
-<body class="home">
+<body>
   <script type="module">
     import { mountNav } from "/js/nav.js";
     mountNav();
   </script>
 
-  <!-- HERO FULLSCREEN -->
-  <section class="hero">
-    <div class="reel">
-      <!-- 👇 el reel SIEMPRE se muestra full -->
-      <video
-        class="reel-video"
-        src="/assets/reel.mp4"
-        autoplay
-        muted
-        playsinline
-        loop
-        preload="auto"
-      ></video>
+  <!-- HERO -->
+  <section class="hero-wrap">
+    <div class="hero-card">
+      <div class="reel" id="reel">
+        <!-- video injected by JS -->
+      </div>
     </div>
   </section>
 
-  <!-- FEATURED -->
   <main class="container">
+
+    <!-- FEATURED -->
     <section class="section">
       <div class="sec-head">
         <h2 class="h2" id="featuredTitle">Destacados</h2>
@@ -54,35 +157,21 @@
       </div>
 
       <div style="height: 14px"></div>
+
       <div class="grid" id="featuredGrid"></div>
     </section>
 
-    <!-- BRANDS BLOCK -->
-    <section class="brands">
-      <div class="brands-inner">
-        <h3 class="brands-title" id="brandsTitle">Marcas con las que trabajamos</h3>
-
-        <div class="brands-grid">
-          <!-- Reemplazá estos logos por los tuyos cuando los tengas -->
-          <img src="/assets/brands/brand-01.png" alt="Brand 1" loading="lazy">
-          <img src="/assets/brands/brand-02.png" alt="Brand 2" loading="lazy">
-          <img src="/assets/brands/brand-03.png" alt="Brand 3" loading="lazy">
-          <img src="/assets/brands/brand-04.png" alt="Brand 4" loading="lazy">
-          <img src="/assets/brands/brand-05.png" alt="Brand 5" loading="lazy">
-          <img src="/assets/brands/brand-06.png" alt="Brand 6" loading="lazy">
-          <img src="/assets/brands/brand-07.png" alt="Brand 7" loading="lazy">
-          <img src="/assets/brands/brand-08.png" alt="Brand 8" loading="lazy">
-          <img src="/assets/brands/brand-09.png" alt="Brand 9" loading="lazy">
-          <img src="/assets/brands/brand-10.png" alt="Brand 10" loading="lazy">
-          <img src="/assets/brands/brand-11.png" alt="Brand 11" loading="lazy">
-        </div>
-      </div>
+    <!-- BRANDS -->
+    <section class="brands-wrap" id="brandsSection" style="display:none;">
+      <h2 class="brands-title" id="brandsTitle">Marcas con las que trabajamos</h2>
+      <div class="brands-grid" id="brandsGrid"></div>
     </section>
+
   </main>
 
   <script type="module">
     import { getLang } from "/js/site.js";
-    import { fetchProjects } from "/js/sanity.js";
+    import { fetchProjects, fetchSiteSettings } from "/js/sanity.js";
 
     const lang = getLang();
 
@@ -90,31 +179,39 @@
       es: {
         featured: "Destacados",
         seeAll: "Ver todo →",
-        brands: "Marcas con las que trabajamos"
+        brandsFallback: "Marcas con las que trabajamos",
       },
       en: {
         featured: "Featured",
         seeAll: "See all →",
-        brands: "Brands we have teamed up with"
+        brandsFallback: "Brands we have teamed up with",
       }
     };
 
-    const c = COPY[lang] || COPY.es;
+    const c = COPY[lang];
+
     document.getElementById("featuredTitle").textContent = c.featured;
     document.getElementById("seeAll").textContent = c.seeAll;
-    document.getElementById("brandsTitle").textContent = c.brands;
 
     function titleFor(p){ return lang === "es" ? p.title_es : p.title_en; }
 
+    // --- Reel ---
+    // Asegurate de que el reel esté en /assets/reel.mp4
+    const reel = document.getElementById("reel");
+    reel.innerHTML = `
+      <video autoplay muted playsinline loop preload="auto">
+        <source src="/assets/reel.mp4" type="video/mp4" />
+      </video>
+    `;
+
+    // --- Featured cards ---
     const featuredGrid = document.getElementById("featuredGrid");
 
     (async () => {
       const projects = await fetchProjects();
-      const featured = projects
-        .filter(p => p.featured)
-        .sort((a,b) => (a.order ?? 999) - (b.order ?? 999));
+      const featured = projects.filter(p => p.featured).slice(0, 6);
 
-      featuredGrid.innerHTML = featured.slice(0, 12).map(p => `
+      featuredGrid.innerHTML = featured.map(p => `
         <a class="card" href="/projects/#/${encodeURIComponent(p.slug)}">
           <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy"/>
           <div class="meta">
@@ -124,6 +221,43 @@
         </a>
       `).join("");
     })();
+
+    // --- Brands from Sanity ---
+    const brandsSection = document.getElementById("brandsSection");
+    const brandsGrid = document.getElementById("brandsGrid");
+    const brandsTitle = document.getElementById("brandsTitle");
+
+    (async () => {
+      try {
+        const settings = await fetchSiteSettings();
+        if (!settings) return;
+
+        brandsTitle.textContent =
+          lang === "es"
+            ? (settings.brandsTitle_es || c.brandsFallback)
+            : (settings.brandsTitle_en || c.brandsFallback);
+
+        const brands = Array.isArray(settings.brands) ? settings.brands : [];
+        const valid = brands.filter(b => b && b.logo);
+
+        if (!valid.length) return;
+
+        brandsSection.style.display = "block";
+
+        brandsGrid.innerHTML = valid.map(b => {
+          const img = `<img src="${b.logo}" alt="${b.name || "Brand"}" loading="lazy"/>`;
+          if (b.url) {
+            return `<a class="brand-item" href="${b.url}" target="_blank" rel="noopener noreferrer">${img}</a>`;
+          }
+          return `<div class="brand-item">${img}</div>`;
+        }).join("");
+
+      } catch (e) {
+        // no romper la home si falla sanity settings
+        console.warn("Brands settings error:", e);
+      }
+    })();
+
   </script>
 </body>
 </html>
