@@ -26,7 +26,7 @@ function descFor(p, lang) {
 --------------------------- */
 const COPY = {
   es: {
-    listTitle: "Proyectos",
+    listTitle: "Nuestro trabajo",
     detailKicker: "Proyecto",
     back: "Volver",
     loading: "Cargando…",
