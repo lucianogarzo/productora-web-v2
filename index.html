@@ -23,7 +23,7 @@
   <link rel="icon" href="/assets/favicon.png" />
 
   <style>
-    /* HOME specific */
+    /* HOME */
     .hero-wrap{ padding-top:0; padding-bottom: 22px; }
     .hero-card{ position:relative; border:0; border-radius:0; overflow:hidden; background:#000; }
 
@@ -58,37 +58,94 @@
     }
     .see-all{ color: rgba(10,10,10,.62); font-size: 14px; text-decoration:none; }
 
-    /* BRANDS section */
-    .brands-wrap{ padding: 70px 0 40px; }
-    .brands-title{ margin:0 0 26px; font-size:22px; text-align:center; letter-spacing:.2px; }
+    /* ===== BRANDS (dark block + uniform logo size) ===== */
+    .brands-wrap{
+      margin: 10px 0 70px;
+      border-radius: 26px;
+      padding: 68px 0 56px;
+      background: #151618;
+      color: #fff;
+      overflow:hidden;
+      position:relative;
+    }
+
+    /* subtle top highlight */
+    .brands-wrap::before{
+      content:"";
+      position:absolute;
+      left:0; right:0;
+      height: 160px;
+      top: 0;
+      background: radial-gradient(900px 220px at 50% 0%, rgba(255,255,255,.08), rgba(255,255,255,0));
+      pointer-events:none;
+    }
+
+    .brands-inner{
+      position:relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 22px;
+    }
+
+    .brands-title{
+      margin:0 0 28px;
+      text-align:center;
+      font-size: 22px;
+      font-weight: 500;
+      letter-spacing: .2px;
+      color: rgba(255,255,255,.92);
+    }
+
     .brands-grid{
       display:grid;
-      gap: 26px 34px;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 30px 36px;
       align-items:center;
       justify-items:center;
-      padding: 20px 0 0;
+      padding-top: 8px;
     }
+
+    /* Each logo uses SAME bounding box */
     .brand-item{
       display:flex;
       align-items:center;
       justify-content:center;
       width:100%;
-      opacity:.95;
+      opacity: .82;
       transition: opacity .25s ease, transform .25s ease;
-      filter: grayscale(100%);
     }
     .brand-item:hover{
-      opacity:1;
+      opacity: 1;
       transform: translateY(-2px);
-      filter: grayscale(0%);
     }
-    .brand-item img{
-      max-width: 170px;
-      width:100%;
-      height:auto;
+
+    /* Uniform logo container */
+    .brand-box{
+      width: 180px;     /* fixed width */
+      height: 64px;     /* fixed height */
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .brand-box img{
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* IMPORTANT: no crop / no stretch */
       display:block;
-      object-fit:contain;
+
+      /* Uniform white logos */
+      filter: brightness(0) invert(1);
+      opacity: .95;
+    }
+
+    @media (max-width: 900px){
+      .brands-grid{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .brand-box{ width: 170px; height: 60px; }
+    }
+    @media (max-width: 560px){
+      .brands-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .brand-box{ width: 150px; height: 54px; }
     }
   </style>
 </head>
@@ -99,7 +156,7 @@
     mountNav();
   </script>
 
-  <!-- HERO (video NO depende de JS) -->
+  <!-- HERO -->
   <section class="hero-wrap">
     <div class="hero-card">
       <div class="reel">
@@ -111,7 +168,6 @@
   </section>
 
   <main class="container">
-
     <!-- FEATURED -->
     <section class="section">
       <div class="sec-head">
@@ -121,7 +177,6 @@
 
       <div style="height: 14px"></div>
 
-      <!-- fallback visible until JS renders -->
       <div id="featuredGrid" class="grid">
         <div style="opacity:.6;padding:14px;">Cargando…</div>
       </div>
@@ -129,10 +184,11 @@
 
     <!-- BRANDS -->
     <section class="brands-wrap" id="brandsSection" style="display:none;">
-      <h2 class="brands-title" id="brandsTitle">Marcas con las que trabajamos</h2>
-      <div class="brands-grid" id="brandsGrid"></div>
+      <div class="brands-inner">
+        <h2 class="brands-title" id="brandsTitle">Marcas con las que trabajamos</h2>
+        <div class="brands-grid" id="brandsGrid"></div>
+      </div>
     </section>
-
   </main>
 
   <script type="module">
@@ -153,7 +209,7 @@
     function titleFor(p){ return lang === "es" ? p.title_es : p.title_en; }
     const featuredGrid = document.getElementById("featuredGrid");
 
-    // FEATURED (protected)
+    // FEATURED (safe)
     (async () => {
       try{
         const projects = await fetchProjects();
@@ -179,7 +235,7 @@
       }
     })();
 
-    // BRANDS (protected)
+    // BRANDS (dark block)
     (async () => {
       try{
         const settings = await fetchSiteSettings();
@@ -200,13 +256,19 @@
         if (!valid.length) return;
 
         brandsSection.style.display = "block";
+
         brandsGrid.innerHTML = valid.map(b => {
-          const img = `<img src="${b.logo}" alt="${b.name || "Brand"}" loading="lazy"/>`;
+          const inner = `
+            <div class="brand-box">
+              <img src="${b.logo}" alt="${b.name || "Brand"}" loading="lazy"/>
+            </div>
+          `;
           if (b.url) {
-            return `<a class="brand-item" href="${b.url}" target="_blank" rel="noopener noreferrer">${img}</a>`;
+            return `<a class="brand-item" href="${b.url}" target="_blank" rel="noopener noreferrer">${inner}</a>`;
           }
-          return `<div class="brand-item">${img}</div>`;
+          return `<div class="brand-item">${inner}</div>`;
         }).join("");
+
       }catch(e){
         console.warn("Brands settings error:", e);
       }
