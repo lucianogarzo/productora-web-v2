@@ -1,199 +1,253 @@
+// Projects/projects.js
 import { getLang } from "/js/site.js";
-import { fetchProjects, fetchProjectBySlug } from "/js/sanity.js";
+import { sanityFetch } from "/js/sanity.js";
 
+/* ---------------------------
+   Helpers
+--------------------------- */
+function escapeHtml(str = "") {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function titleFor(p, lang) {
+  return lang === "es" ? (p.title_es || "") : (p.title_en || "");
+}
+function descFor(p, lang) {
+  return lang === "es" ? (p.description_es || "") : (p.description_en || "");
+}
+
+/* ---------------------------
+   YouTube embed
+--------------------------- */
+function toYouTubeEmbed(url) {
+  if (!url) return null;
+  const u = String(url).trim();
+
+  let id = null;
+
+  // youtu.be/ID
+  const m1 = u.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/);
+  if (m1) id = m1[1];
+
+  // watch?v=ID
+  const m2 = u.match(/[?&]v=([a-zA-Z0-9_-]{6,})/);
+  if (m2) id = m2[1];
+
+  // /embed/ID
+  const m3 = u.match(/\/embed\/([a-zA-Z0-9_-]{6,})/);
+  if (m3) id = m3[1];
+
+  // /shorts/ID
+  const m4 = u.match(/\/shorts\/([a-zA-Z0-9_-]{6,})/);
+  if (m4) id = m4[1];
+
+  if (!id) return null;
+
+  // Autoplay: mejor NO forzarlo en página de proyecto (evita bloqueos de navegador)
+  return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`;
+}
+
+function renderYouTube(videoEl, url) {
+  const embed = toYouTubeEmbed(url);
+  if (!embed) {
+    videoEl.innerHTML = `<div class="muted" style="padding:16px">Video no disponible</div>`;
+    return;
+  }
+
+  videoEl.innerHTML = `
+    <div style="position:relative;width:100%;padding-top:56.25%;background:#000;border-radius:18px;overflow:hidden">
+      <iframe
+        src="${embed}"
+        title="YouTube video"
+        allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        style="position:absolute;inset:0;width:100%;height:100%;border:0"
+      ></iframe>
+    </div>
+  `;
+}
+
+/* ---------------------------
+   Sanity queries
+--------------------------- */
+async function fetchAllProjects() {
+  const query = `
+    *[_type == "project"] | order(order asc, _createdAt desc){
+      "slug": slug.current,
+      title_es, title_en,
+      client, year,
+      featured, order,
+      vimeo_url,
+      "thumbnail": thumbnail.asset->url
+    }
+  `;
+  const data = await sanityFetch(query, {});
+  return Array.isArray(data) ? data : [];
+}
+
+async function fetchProjectBySlug(slug) {
+  const query = `
+    *[_type == "project" && slug.current == $slug][0]{
+      "slug": slug.current,
+      title_es, title_en,
+      client, year,
+      vimeo_url,
+      description_es, description_en,
+      featured, order,
+      "thumbnail": thumbnail.asset->url,
+      "gallery": gallery[].asset->url
+    }
+  `;
+  return await sanityFetch(query, { slug });
+}
+
+/* ---------------------------
+   Page modes
+   - /projects/  -> grid
+   - /projects/#/slug -> detail
+--------------------------- */
 const lang = getLang();
+const root = document.getElementById("root") || document.body;
 
-const COPY = {
-  es: {
-    title: "Projects",
-    subtitle: "Selección de trabajos. Dirección, producción y post.",
-    back: "← Projects",
-    notFoundTitle: "Project not found",
-    notFoundDesc: (slug) => `No se encontró el proyecto con slug: ${slug}`,
-    invalidVideo: "Video URL inválida.",
-    filters: ["All", "Featured"],
-  },
-  en: {
-    title: "Projects",
-    subtitle: "Selected work. Direction, production and post.",
-    back: "← Projects",
-    notFoundTitle: "Project not found",
-    notFoundDesc: (slug) => `No project found for slug: ${slug}`,
-    invalidVideo: "Invalid video URL.",
-    filters: ["All", "Featured"],
-  },
-};
-
-const c = COPY[lang];
-
-// dom
-const listView = document.getElementById("listView");
-const detailView = document.getElementById("detailView");
-
-const grid = document.getElementById("grid");
-const filters = document.getElementById("filters");
-
-const pageTitle = document.getElementById("pageTitle");
-const pageSubtitle = document.getElementById("pageSubtitle");
-
-const backBtn = document.getElementById("backBtn");
-const detailSlug = document.getElementById("detailSlug");
-const detailTitle = document.getElementById("detailTitle");
-const detailSub = document.getElementById("detailSub");
-const detailVideo = document.getElementById("detailVideo");
-const detailDesc = document.getElementById("detailDesc");
-const gallery = document.getElementById("gallery");
-
-pageTitle.textContent = c.title;
-pageSubtitle.textContent = c.subtitle;
-backBtn.textContent = c.back;
-
-let projects = [];
-let filterMode = "all";
-
-function titleFor(p) {
-  return lang === "es" ? p.title_es : p.title_en;
-}
-function descFor(p) {
-  return lang === "es" ? p.description_es : p.description_en;
+function getHashSlug() {
+  // expects "#/slug"
+  const h = window.location.hash || "";
+  const m = h.match(/^#\/(.+)$/);
+  return m ? decodeURIComponent(m[1]) : null;
 }
 
-/* Video helpers */
-function youtubeId(url) {
-  if (!url) return null;
-  try {
-    const u = new URL(url);
-    if (u.hostname.includes("youtu.be")) return u.pathname.replace("/", "");
-    if (u.searchParams.get("v")) return u.searchParams.get("v");
-    const parts = u.pathname.split("/").filter(Boolean);
-    return parts[parts.length - 1] || null;
-  } catch {
-    return null;
+function mountLayout() {
+  // Projects index.html ya debe tener nav externo,
+  // pero si no tiene un wrapper, lo creamos igual.
+  if (!document.getElementById("page")) {
+    const wrap = document.createElement("div");
+    wrap.id = "page";
+    wrap.className = "container";
+    wrap.style.paddingTop = "22px";
+    root.appendChild(wrap);
   }
+  return document.getElementById("page");
 }
 
-function vimeoId(url) {
-  if (!url) return null;
-  const m = String(url).match(/(?:vimeo\.com\/(?:video\/)?|\/)(\d{6,12})(?:$|[?/])/);
-  return m ? m[1] : null;
-}
-
-function videoEmbedHTML(url) {
-  const yt = youtubeId(url);
-  if (yt) {
-    return `<iframe
-      src="https://www.youtube-nocookie.com/embed/${yt}?autoplay=0&mute=0&controls=1&modestbranding=1&rel=0"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowfullscreen
-    ></iframe>`;
-  }
-
-  const vm = vimeoId(url);
-  if (vm) {
-    return `<iframe
-      src="https://player.vimeo.com/video/${vm}?autoplay=0&muted=0&title=0&byline=0&portrait=0"
-      allow="autoplay; fullscreen; picture-in-picture"
-      allowfullscreen
-    ></iframe>`;
-  }
-  return null;
-}
-
-function renderFilters() {
-  filters.innerHTML = `
-    <button class="pill ${filterMode === "all" ? "active" : ""}" data-mode="all">${c.filters[0]}</button>
-    <button class="pill ${filterMode === "featured" ? "active" : ""}" data-mode="featured">${c.filters[1]}</button>
+/* ---------------------------
+   Render: Grid
+--------------------------- */
+async function renderGrid(container) {
+  container.innerHTML = `
+    <div class="sec-head" style="display:flex;justify-content:space-between;align-items:baseline;gap:18px">
+      <h1 class="h2" style="margin:0">${lang === "es" ? "Proyectos" : "Projects"}</h1>
+    </div>
+    <div style="height:14px"></div>
+    <div class="grid" id="projectsGrid"><div class="muted" style="padding:14px;opacity:.7">Loading…</div></div>
   `;
 
-  filters.querySelectorAll(".pill").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      filterMode = btn.getAttribute("data-mode");
-      renderList();
-      renderFilters();
-    });
-  });
+  const grid = document.getElementById("projectsGrid");
+  try {
+    const projects = await fetchAllProjects();
+
+    if (!projects.length) {
+      grid.innerHTML = `<div class="muted" style="padding:14px;opacity:.7">No projects yet.</div>`;
+      return;
+    }
+
+    grid.innerHTML = projects
+      .map((p) => {
+        const t = escapeHtml(titleFor(p, lang));
+        const meta = escapeHtml([p.client, p.year].filter(Boolean).join(" • "));
+        const img = p.thumbnail || "";
+        const href = `/projects/#/${encodeURIComponent(p.slug)}`;
+
+        return `
+          <a class="card" href="${href}">
+            <img src="${img}" alt="${t}" loading="lazy"/>
+            <div class="meta">
+              <h3>${t}</h3>
+              <p>${meta}</p>
+            </div>
+          </a>
+        `;
+      })
+      .join("");
+  } catch (e) {
+    console.error("Grid error:", e);
+    grid.innerHTML = `<div class="muted" style="padding:14px;opacity:.7">Error loading projects.</div>`;
+  }
 }
 
-function renderList() {
-  const list =
-    filterMode === "featured" ? projects.filter((p) => p.featured) : projects;
-
-  grid.innerHTML = list.map((p) => `
-    <a class="card" href="/projects/#/${encodeURIComponent(p.slug)}">
-      <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy" />
-      <div class="meta">
-        <h3 class="display">${titleFor(p)}</h3>
-        <p>${[p.client, p.year].filter(Boolean).join(" • ")}</p>
-      </div>
+/* ---------------------------
+   Render: Detail
+--------------------------- */
+async function renderDetail(container, slug) {
+  container.innerHTML = `
+    <a href="/projects/" style="display:inline-block;margin:10px 0 14px;opacity:.8;text-decoration:none">
+      ← ${lang === "es" ? "Volver" : "Back"}
     </a>
-  `).join("");
-}
 
-async function renderDetail(slug) {
-  detailSlug.textContent = slug ? `/${slug}` : "";
-  detailTitle.textContent = "";
-  detailSub.textContent = "";
-  detailDesc.textContent = "";
-  detailVideo.innerHTML = "";
-  if (gallery) gallery.innerHTML = "";
+    <div id="videoWrap"></div>
 
-  const project = await fetchProjectBySlug(slug);
+    <div style="height:16px"></div>
 
-  if (!project) {
-    detailTitle.textContent = c.notFoundTitle;
-    detailDesc.textContent = c.notFoundDesc(slug);
-    return;
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <h1 id="title" class="h1" style="margin:0"></h1>
+      <div id="meta" style="opacity:.7"></div>
+      <p id="desc" style="max-width:80ch;opacity:.85;margin:0"></p>
+    </div>
+
+    <div style="height:22px"></div>
+    <div id="gallery" class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));"></div>
+  `;
+
+  try {
+    const project = await fetchProjectBySlug(slug);
+
+    if (!project) {
+      container.innerHTML = `<div style="padding:18px;opacity:.7">Project not found</div>`;
+      return;
+    }
+
+    const title = titleFor(project, lang);
+    const desc = descFor(project, lang);
+    const meta = [project.client, project.year].filter(Boolean).join(" • ");
+
+    document.getElementById("title").textContent = title || "";
+    document.getElementById("meta").textContent = meta || "";
+    document.getElementById("desc").textContent = desc || "";
+
+    // VIDEO
+    const videoWrap = document.getElementById("videoWrap");
+    const url = project?.vimeo_url || "";
+    renderYouTube(videoWrap, url);
+
+    // GALLERY
+    const gal = document.getElementById("gallery");
+    const imgs = Array.isArray(project.gallery) ? project.gallery.filter(Boolean) : [];
+    if (imgs.length) {
+      gal.innerHTML = imgs
+        .map((u) => `<img src="${u}" loading="lazy" alt="" style="width:100%;height:100%;aspect-ratio:16/10;object-fit:cover;border-radius:18px;border:1px solid rgba(0,0,0,.12)"/>`)
+        .join("");
+    } else {
+      gal.innerHTML = "";
+    }
+  } catch (e) {
+    console.error("Detail error:", e);
+    container.innerHTML = `<div style="padding:18px;opacity:.7">Error loading project</div>`;
   }
-
-  const t = titleFor(project);
-  detailTitle.textContent = t;
-  detailSub.textContent = [project.client, project.year].filter(Boolean).join(" • ");
-  detailDesc.textContent = descFor(project) || "";
-
-  const embed = videoEmbedHTML(project.vimeo_url);
-  detailVideo.innerHTML = embed
-    ? embed
-    : `<div style="padding:24px;opacity:.7">${c.invalidVideo}</div>`;
-
-  // gallery
-  const imgs = Array.isArray(project.gallery) ? project.gallery.filter(Boolean) : [];
-  if (gallery) {
-    gallery.innerHTML = imgs.length
-      ? imgs.map(url => `<img src="${url}" loading="lazy" alt="">`).join("")
-      : "";
-  }
 }
 
-function showList() {
-  detailView.classList.add("hidden");
-  listView.classList.remove("hidden");
-}
-
-function showDetail() {
-  listView.classList.add("hidden");
-  detailView.classList.remove("hidden");
-}
-
-function route() {
-  const hash = location.hash || "";
-  const m = hash.match(/^#\/(.+)$/);
-
-  if (!m) {
-    showList();
-    renderList();
-    return;
-  }
-
-  const slug = decodeURIComponent(m[1]);
-  showDetail();
-  renderDetail(slug);
+/* ---------------------------
+   Router
+--------------------------- */
+async function route() {
+  const page = mountLayout();
+  const slug = getHashSlug();
+  if (slug) return renderDetail(page, slug);
+  return renderGrid(page);
 }
 
 window.addEventListener("hashchange", route);
-
-(async () => {
-  renderFilters();
-  projects = await fetchProjects();
-  renderList();
-  route();
-})();
+route();
