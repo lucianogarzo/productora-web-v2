@@ -22,6 +22,34 @@ function descFor(p, lang) {
 }
 
 /* ---------------------------
+   Copy
+--------------------------- */
+const COPY = {
+  es: {
+    listTitle: "Proyectos",
+    detailKicker: "Proyecto",
+    back: "Volver",
+    loading: "Cargando…",
+    errorProjects: "Error cargando proyectos.",
+    noProjects: "Todavía no hay proyectos.",
+    projectNotFound: "Proyecto no encontrado",
+    errorProject: "Error cargando proyecto",
+    videoNA: "Video no disponible",
+  },
+  en: {
+    listTitle: "Projects",
+    detailKicker: "Project",
+    back: "Back",
+    loading: "Loading…",
+    errorProjects: "Error loading projects.",
+    noProjects: "No projects yet.",
+    projectNotFound: "Project not found",
+    errorProject: "Error loading project",
+    videoNA: "Video not available",
+  }
+};
+
+/* ---------------------------
    YouTube embed
 --------------------------- */
 function toYouTubeEmbed(url) {
@@ -46,10 +74,10 @@ function toYouTubeEmbed(url) {
   return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`;
 }
 
-function renderYouTube(el, url) {
+function renderYouTube(el, url, c) {
   const embed = toYouTubeEmbed(url);
   if (!embed) {
-    el.innerHTML = `<div style="padding:16px;opacity:.7">Video no disponible</div>`;
+    el.innerHTML = `<div style="padding:16px;opacity:.7">${c.videoNA}</div>`;
     return;
   }
 
@@ -68,7 +96,6 @@ function renderYouTube(el, url) {
 
 /* ---------------------------
    Fetch project by slug (NO params)
-   ✅ avoids $slug / $params issue forever
 --------------------------- */
 async function fetchProjectBySlugNoParams(slug) {
   const safeSlug = String(slug).replaceAll("\\", "\\\\").replaceAll('"', '\\"');
@@ -92,6 +119,7 @@ async function fetchProjectBySlugNoParams(slug) {
    Router
 --------------------------- */
 const lang = getLang();
+const c = COPY[lang] || COPY.es;
 
 function getHashSlug() {
   const h = window.location.hash || "";
@@ -117,10 +145,10 @@ function mountLayout() {
 async function renderGrid(container) {
   container.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:18px">
-      <h1 class="h2" style="margin:0">${lang === "es" ? "Proyectos" : "Projects"}</h1>
+      <h1 class="h2" style="margin:0">${c.listTitle}</h1>
     </div>
     <div style="height:14px"></div>
-    <div class="grid" id="projectsGrid"><div style="padding:14px;opacity:.7">Loading…</div></div>
+    <div class="grid" id="projectsGrid"><div style="padding:14px;opacity:.7">${c.loading}</div></div>
   `;
 
   const grid = document.getElementById("projectsGrid");
@@ -129,7 +157,7 @@ async function renderGrid(container) {
     const projects = await fetchProjects();
 
     if (!projects.length) {
-      grid.innerHTML = `<div style="padding:14px;opacity:.7">No projects yet.</div>`;
+      grid.innerHTML = `<div style="padding:14px;opacity:.7">${c.noProjects}</div>`;
       return;
     }
 
@@ -153,7 +181,7 @@ async function renderGrid(container) {
       .join("");
   } catch (e) {
     console.error("Grid error:", e);
-    grid.innerHTML = `<div style="padding:14px;opacity:.7">Error loading projects.</div>`;
+    grid.innerHTML = `<div style="padding:14px;opacity:.7">${c.errorProjects}</div>`;
   }
 }
 
@@ -162,9 +190,13 @@ async function renderGrid(container) {
 --------------------------- */
 async function renderDetail(container, slug) {
   container.innerHTML = `
-    <a href="/projects/" style="display:inline-block;margin:10px 0 14px;opacity:.8;text-decoration:none">
-      ← ${lang === "es" ? "Volver" : "Back"}
+    <a href="/projects/" style="display:inline-block;margin:10px 0 14px;opacity:.85;text-decoration:none">
+      ← ${c.back}
     </a>
+
+    <div style="margin:0 0 10px; font-size:12px; letter-spacing:.22em; text-transform:uppercase; opacity:.55">
+      ${c.detailKicker}
+    </div>
 
     <div id="videoWrap"></div>
 
@@ -184,7 +216,7 @@ async function renderDetail(container, slug) {
     const project = await fetchProjectBySlugNoParams(slug);
 
     if (!project) {
-      container.innerHTML = `<div style="padding:18px;opacity:.7">Project not found</div>`;
+      container.innerHTML = `<div style="padding:18px;opacity:.7">${c.projectNotFound}</div>`;
       return;
     }
 
@@ -192,7 +224,7 @@ async function renderDetail(container, slug) {
     document.getElementById("meta").textContent = [project.client, project.year].filter(Boolean).join(" • ");
     document.getElementById("desc").textContent = descFor(project, lang);
 
-    renderYouTube(document.getElementById("videoWrap"), project?.vimeo_url || "");
+    renderYouTube(document.getElementById("videoWrap"), project?.vimeo_url || "", c);
 
     const gal = document.getElementById("gallery");
     const imgs = Array.isArray(project.gallery) ? project.gallery.filter(Boolean) : [];
@@ -206,7 +238,7 @@ async function renderDetail(container, slug) {
       .join("");
   } catch (e) {
     console.error("Detail error:", e);
-    container.innerHTML = `<div style="padding:18px;opacity:.7">Error loading project</div>`;
+    container.innerHTML = `<div style="padding:18px;opacity:.7">${c.errorProject}</div>`;
   }
 }
 
