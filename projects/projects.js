@@ -1,7 +1,10 @@
 // Projects/projects.js
 import { getLang } from "/js/site.js";
-import { fetchProjects, fetchProjectBySlug } from "/js/sanity.js";
+import { sanityFetch, fetchProjects } from "/js/sanity.js";
 
+/* ---------------------------
+   Helpers
+--------------------------- */
 function escapeHtml(str = "") {
   return String(str)
     .replaceAll("&", "&amp;")
@@ -18,7 +21,9 @@ function descFor(p, lang) {
   return lang === "es" ? (p?.description_es || "") : (p?.description_en || "");
 }
 
-/* -------- YouTube embed -------- */
+/* ---------------------------
+   YouTube embed
+--------------------------- */
 function toYouTubeEmbed(url) {
   if (!url) return null;
   const u = String(url).trim();
@@ -61,7 +66,31 @@ function renderYouTube(el, url) {
   `;
 }
 
-/* -------- Router -------- */
+/* ---------------------------
+   Fetch project by slug (NO params)
+   ✅ avoids $slug / $params issue forever
+--------------------------- */
+async function fetchProjectBySlugNoParams(slug) {
+  const safeSlug = String(slug).replaceAll("\\", "\\\\").replaceAll('"', '\\"');
+
+  const query = `
+    *[_type == "project" && slug.current == "${safeSlug}"][0]{
+      "slug": slug.current,
+      title_es, title_en,
+      client, year,
+      vimeo_url,
+      description_es, description_en,
+      featured, order,
+      "thumbnail": thumbnail.asset->url,
+      "gallery": gallery[].asset->url
+    }
+  `;
+  return sanityFetch(query);
+}
+
+/* ---------------------------
+   Router
+--------------------------- */
 const lang = getLang();
 
 function getHashSlug() {
@@ -82,7 +111,9 @@ function mountLayout() {
   return page;
 }
 
-/* -------- Grid -------- */
+/* ---------------------------
+   Grid
+--------------------------- */
 async function renderGrid(container) {
   container.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:18px">
@@ -126,7 +157,9 @@ async function renderGrid(container) {
   }
 }
 
-/* -------- Detail -------- */
+/* ---------------------------
+   Detail
+--------------------------- */
 async function renderDetail(container, slug) {
   container.innerHTML = `
     <a href="/projects/" style="display:inline-block;margin:10px 0 14px;opacity:.8;text-decoration:none">
@@ -148,7 +181,7 @@ async function renderDetail(container, slug) {
   `;
 
   try {
-    const project = await fetchProjectBySlug(slug);
+    const project = await fetchProjectBySlugNoParams(slug);
 
     if (!project) {
       container.innerHTML = `<div style="padding:18px;opacity:.7">Project not found</div>`;
@@ -159,10 +192,8 @@ async function renderDetail(container, slug) {
     document.getElementById("meta").textContent = [project.client, project.year].filter(Boolean).join(" • ");
     document.getElementById("desc").textContent = descFor(project, lang);
 
-    // VIDEO (YouTube URL stored in vimeo_url)
     renderYouTube(document.getElementById("videoWrap"), project?.vimeo_url || "");
 
-    // GALLERY
     const gal = document.getElementById("gallery");
     const imgs = Array.isArray(project.gallery) ? project.gallery.filter(Boolean) : [];
     gal.innerHTML = imgs
@@ -179,7 +210,9 @@ async function renderDetail(container, slug) {
   }
 }
 
-/* -------- Route -------- */
+/* ---------------------------
+   Route
+--------------------------- */
 async function route() {
   const page = mountLayout();
   const slug = getHashSlug();
