@@ -26,7 +26,7 @@ function descFor(p, lang) {
 --------------------------- */
 const COPY = {
   es: {
-    listTitle: "Nuestro trabajo",
+    listTitle: "Proyectos",
     detailKicker: "Proyecto",
     back: "Volver",
     loading: "Cargando…",
@@ -37,7 +37,7 @@ const COPY = {
     videoNA: "Video no disponible",
   },
   en: {
-    listTitle: "Projects",
+    listTitle: "Nuestro trabajo",
     detailKicker: "Project",
     back: "Back",
     loading: "Loading…",
