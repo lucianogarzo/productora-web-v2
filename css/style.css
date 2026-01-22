@@ -267,4 +267,9 @@ header.nav .lang{
 body.home header.nav:not(.is-solid) .lang{
   border-color: rgba(255,255,255,.30) !important;
 }
+body.home header.nav:not(.is-solid){
+  background: linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,0)) !important;
+  border-bottom: 1px solid transparent !important;
+}
+
 
