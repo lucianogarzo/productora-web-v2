@@ -1,10 +1,7 @@
 // Projects/projects.js
 import { getLang } from "/js/site.js";
-import { sanityFetch } from "/js/sanity.js";
+import { fetchProjects, fetchProjectBySlug } from "/js/sanity.js";
 
-/* ---------------------------
-   Helpers
---------------------------- */
 function escapeHtml(str = "") {
   return String(str)
     .replaceAll("&", "&amp;")
@@ -21,33 +18,26 @@ function descFor(p, lang) {
   return lang === "es" ? (p?.description_es || "") : (p?.description_en || "");
 }
 
-/* ---------------------------
-   YouTube embed
---------------------------- */
+/* -------- YouTube embed -------- */
 function toYouTubeEmbed(url) {
   if (!url) return null;
   const u = String(url).trim();
 
   let id = null;
 
-  // youtu.be/ID
   const m1 = u.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/);
   if (m1) id = m1[1];
 
-  // watch?v=ID
   const m2 = u.match(/[?&]v=([a-zA-Z0-9_-]{6,})/);
   if (m2) id = m2[1];
 
-  // /embed/ID
   const m3 = u.match(/\/embed\/([a-zA-Z0-9_-]{6,})/);
   if (m3) id = m3[1];
 
-  // /shorts/ID
   const m4 = u.match(/\/shorts\/([a-zA-Z0-9_-]{6,})/);
   if (m4) id = m4[1];
 
   if (!id) return null;
-
   return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`;
 }
 
@@ -71,46 +61,7 @@ function renderYouTube(el, url) {
   `;
 }
 
-/* ---------------------------
-   Sanity queries
---------------------------- */
-async function fetchAllProjects() {
-  const query = `
-    *[_type == "project"] | order(order asc, _createdAt desc){
-      "slug": slug.current,
-      title_es, title_en,
-      client, year,
-      featured, order,
-      vimeo_url,
-      "thumbnail": thumbnail.asset->url
-    }
-  `;
-  const res = await sanityFetch(query);
-  return Array.isArray(res) ? res : [];
-}
-
-async function fetchProjectBySlug(slug) {
-  // ✅ Clave: usamos @slug y lo interpolamos ya escapado, sin $params raros
-  const safeSlug = String(slug).replaceAll('"', '\\"');
-
-  const query = `
-    *[_type == "project" && slug.current == "${safeSlug}"][0]{
-      "slug": slug.current,
-      title_es, title_en,
-      client, year,
-      vimeo_url,
-      description_es, description_en,
-      featured, order,
-      "thumbnail": thumbnail.asset->url,
-      "gallery": gallery[].asset->url
-    }
-  `;
-  return await sanityFetch(query);
-}
-
-/* ---------------------------
-   Router
---------------------------- */
+/* -------- Router -------- */
 const lang = getLang();
 
 function getHashSlug() {
@@ -131,9 +82,7 @@ function mountLayout() {
   return page;
 }
 
-/* ---------------------------
-   Grid
---------------------------- */
+/* -------- Grid -------- */
 async function renderGrid(container) {
   container.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:baseline;gap:18px">
@@ -146,7 +95,7 @@ async function renderGrid(container) {
   const grid = document.getElementById("projectsGrid");
 
   try {
-    const projects = await fetchAllProjects();
+    const projects = await fetchProjects();
 
     if (!projects.length) {
       grid.innerHTML = `<div style="padding:14px;opacity:.7">No projects yet.</div>`;
@@ -177,9 +126,7 @@ async function renderGrid(container) {
   }
 }
 
-/* ---------------------------
-   Detail
---------------------------- */
+/* -------- Detail -------- */
 async function renderDetail(container, slug) {
   container.innerHTML = `
     <a href="/projects/" style="display:inline-block;margin:10px 0 14px;opacity:.8;text-decoration:none">
@@ -212,11 +159,10 @@ async function renderDetail(container, slug) {
     document.getElementById("meta").textContent = [project.client, project.year].filter(Boolean).join(" • ");
     document.getElementById("desc").textContent = descFor(project, lang);
 
-    // ✅ VIDEO: YouTube desde vimeo_url (campo legacy)
-    const videoWrap = document.getElementById("videoWrap");
-    renderYouTube(videoWrap, project?.vimeo_url || "");
+    // VIDEO (YouTube URL stored in vimeo_url)
+    renderYouTube(document.getElementById("videoWrap"), project?.vimeo_url || "");
 
-    // ✅ GALLERY
+    // GALLERY
     const gal = document.getElementById("gallery");
     const imgs = Array.isArray(project.gallery) ? project.gallery.filter(Boolean) : [];
     gal.innerHTML = imgs
@@ -233,9 +179,7 @@ async function renderDetail(container, slug) {
   }
 }
 
-/* ---------------------------
-   Route
---------------------------- */
+/* -------- Route -------- */
 async function route() {
   const page = mountLayout();
   const slug = getHashSlug();
