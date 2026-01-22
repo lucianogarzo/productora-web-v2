@@ -73,27 +73,36 @@ header.nav{
   height:72px;
   display:flex;
   align-items:center;
+
+  /* default (solid on non-home pages) */
   background:rgba(255,255,255,.92);
   border-bottom:1px solid var(--line);
-  backdrop-filter:blur(12px);
-  transition:background .25s ease, box-shadow .25s ease;
+
+  transition:background .25s ease, box-shadow .25s ease, border-color .25s ease, backdrop-filter .25s ease;
 }
 
+/* solid state */
 header.nav.is-solid{
   background:rgba(255,255,255,.92);
+  border-bottom:1px solid var(--line);
   box-shadow:0 10px 30px rgba(0,0,0,.04);
+  backdrop-filter: blur(12px);
 }
 
+/* HOME top state: NO background, NO blur, NO border */
 body.home header.nav{
   background:transparent;
   border-bottom:1px solid transparent;
   box-shadow:none;
+  backdrop-filter:none;
 }
 
+/* HOME scrolled state: becomes solid */
 body.home header.nav.is-solid{
   background:rgba(255,255,255,.92);
   border-bottom:1px solid var(--line);
   box-shadow:0 10px 30px rgba(0,0,0,.04);
+  backdrop-filter: blur(12px);
 }
 
 .nav-inner{
@@ -128,17 +137,25 @@ body.home header.nav.is-solid{
   padding:0;
 }
 
-/* color nav */
+/* nav colors (default solid: black) */
 header.nav .brand,
 header.nav .nav-links a,
 header.nav .nav-links button{
   color:#0a0a0a;
 }
 
+/* HOME top: white text over video */
 body.home header.nav:not(.is-solid) .brand,
 body.home header.nav:not(.is-solid) .nav-links a,
 body.home header.nav:not(.is-solid) .nav-links button{
   color:#ffffff;
+}
+
+/* optional: tiny shadow for readability over video */
+body.home header.nav:not(.is-solid) .brand,
+body.home header.nav:not(.is-solid) .nav-links a,
+body.home header.nav:not(.is-solid) .nav-links button{
+  text-shadow: 0 2px 18px rgba(0,0,0,.35);
 }
 
 /* =====================
@@ -151,7 +168,7 @@ body.home header.nav:not(.is-solid) .nav-links button{
 .hero-card{
   position:relative;
   width:100%;
-  height:calc(100vh - 72px);
+  height:100vh;
   min-height:560px;
   overflow:hidden;
   background:#000;
