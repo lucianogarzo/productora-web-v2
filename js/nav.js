@@ -18,15 +18,14 @@ const COPY = {
   },
 };
 
-const onScroll = () => {
-  nav.classList.toggle("is-solid", window.scrollY > 30);
-};
-window.addEventListener("scroll", onScroll, { passive: true });
-onScroll(); // IMPORTANTE: corre al cargar
+export function mountNav() {
+  const lang = getLang();
+  const c = COPY[lang] || COPY.es;
 
-
+  // Create nav element
   const nav = document.createElement("header");
   nav.className = "nav";
+
   nav.innerHTML = `
     <div class="nav-inner container">
       <a class="brand" href="/">${c.home}</a>
@@ -39,16 +38,27 @@ onScroll(); // IMPORTANTE: corre al cargar
       </nav>
     </div>
   `;
-  // nav: transparent -> solid on scroll
-  const onScroll = () => {
-    const solid = window.scrollY > 30;
-    nav.classList.toggle("is-solid", solid);
-  };
-  window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
 
+  // Inject into DOM first so styles apply
   document.body.prepend(nav);
 
+  // Transparent only on Home while at top
+  const isHome = document.body.classList.contains("home") || location.pathname === "/";
+
+  const onScroll = () => {
+    if (!isHome) {
+      // other pages: always solid
+      nav.classList.add("is-solid");
+      return;
+    }
+    // home: solid only after scroll
+    nav.classList.toggle("is-solid", window.scrollY > 30);
+  };
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll(); // run once on load
+
+  // Language toggle
   const btn = document.getElementById("langBtn");
   if (btn) {
     btn.addEventListener("click", () => {
