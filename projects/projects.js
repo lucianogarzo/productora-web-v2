@@ -15,10 +15,10 @@ function escapeHtml(str = "") {
 }
 
 function titleFor(p, lang) {
-  return lang === "es" ? (p.title_es || "") : (p.title_en || "");
+  return lang === "es" ? (p?.title_es || "") : (p?.title_en || "");
 }
 function descFor(p, lang) {
-  return lang === "es" ? (p.description_es || "") : (p.description_en || "");
+  return lang === "es" ? (p?.description_es || "") : (p?.description_en || "");
 }
 
 /* ---------------------------
@@ -48,18 +48,17 @@ function toYouTubeEmbed(url) {
 
   if (!id) return null;
 
-  // Autoplay: mejor NO forzarlo en página de proyecto (evita bloqueos de navegador)
   return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`;
 }
 
-function renderYouTube(videoEl, url) {
+function renderYouTube(el, url) {
   const embed = toYouTubeEmbed(url);
   if (!embed) {
-    videoEl.innerHTML = `<div class="muted" style="padding:16px">Video no disponible</div>`;
+    el.innerHTML = `<div style="padding:16px;opacity:.7">Video no disponible</div>`;
     return;
   }
 
-  videoEl.innerHTML = `
+  el.innerHTML = `
     <div style="position:relative;width:100%;padding-top:56.25%;background:#000;border-radius:18px;overflow:hidden">
       <iframe
         src="${embed}"
@@ -86,13 +85,16 @@ async function fetchAllProjects() {
       "thumbnail": thumbnail.asset->url
     }
   `;
-  const data = await sanityFetch(query, {});
-  return Array.isArray(data) ? data : [];
+  const res = await sanityFetch(query);
+  return Array.isArray(res) ? res : [];
 }
 
 async function fetchProjectBySlug(slug) {
+  // ✅ Clave: usamos @slug y lo interpolamos ya escapado, sin $params raros
+  const safeSlug = String(slug).replaceAll('"', '\\"');
+
   const query = `
-    *[_type == "project" && slug.current == $slug][0]{
+    *[_type == "project" && slug.current == "${safeSlug}"][0]{
       "slug": slug.current,
       title_es, title_en,
       client, year,
@@ -103,55 +105,51 @@ async function fetchProjectBySlug(slug) {
       "gallery": gallery[].asset->url
     }
   `;
-  return await sanityFetch(query, { slug });
+  return await sanityFetch(query);
 }
 
 /* ---------------------------
-   Page modes
-   - /projects/  -> grid
-   - /projects/#/slug -> detail
+   Router
 --------------------------- */
 const lang = getLang();
-const root = document.getElementById("root") || document.body;
 
 function getHashSlug() {
-  // expects "#/slug"
   const h = window.location.hash || "";
   const m = h.match(/^#\/(.+)$/);
   return m ? decodeURIComponent(m[1]) : null;
 }
 
 function mountLayout() {
-  // Projects index.html ya debe tener nav externo,
-  // pero si no tiene un wrapper, lo creamos igual.
-  if (!document.getElementById("page")) {
-    const wrap = document.createElement("div");
-    wrap.id = "page";
-    wrap.className = "container";
-    wrap.style.paddingTop = "22px";
-    root.appendChild(wrap);
+  let page = document.getElementById("page");
+  if (!page) {
+    page = document.createElement("div");
+    page.id = "page";
+    page.className = "container";
+    page.style.paddingTop = "22px";
+    document.body.appendChild(page);
   }
-  return document.getElementById("page");
+  return page;
 }
 
 /* ---------------------------
-   Render: Grid
+   Grid
 --------------------------- */
 async function renderGrid(container) {
   container.innerHTML = `
-    <div class="sec-head" style="display:flex;justify-content:space-between;align-items:baseline;gap:18px">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:18px">
       <h1 class="h2" style="margin:0">${lang === "es" ? "Proyectos" : "Projects"}</h1>
     </div>
     <div style="height:14px"></div>
-    <div class="grid" id="projectsGrid"><div class="muted" style="padding:14px;opacity:.7">Loading…</div></div>
+    <div class="grid" id="projectsGrid"><div style="padding:14px;opacity:.7">Loading…</div></div>
   `;
 
   const grid = document.getElementById("projectsGrid");
+
   try {
     const projects = await fetchAllProjects();
 
     if (!projects.length) {
-      grid.innerHTML = `<div class="muted" style="padding:14px;opacity:.7">No projects yet.</div>`;
+      grid.innerHTML = `<div style="padding:14px;opacity:.7">No projects yet.</div>`;
       return;
     }
 
@@ -175,12 +173,12 @@ async function renderGrid(container) {
       .join("");
   } catch (e) {
     console.error("Grid error:", e);
-    grid.innerHTML = `<div class="muted" style="padding:14px;opacity:.7">Error loading projects.</div>`;
+    grid.innerHTML = `<div style="padding:14px;opacity:.7">Error loading projects.</div>`;
   }
 }
 
 /* ---------------------------
-   Render: Detail
+   Detail
 --------------------------- */
 async function renderDetail(container, slug) {
   container.innerHTML = `
@@ -210,29 +208,25 @@ async function renderDetail(container, slug) {
       return;
     }
 
-    const title = titleFor(project, lang);
-    const desc = descFor(project, lang);
-    const meta = [project.client, project.year].filter(Boolean).join(" • ");
+    document.getElementById("title").textContent = titleFor(project, lang);
+    document.getElementById("meta").textContent = [project.client, project.year].filter(Boolean).join(" • ");
+    document.getElementById("desc").textContent = descFor(project, lang);
 
-    document.getElementById("title").textContent = title || "";
-    document.getElementById("meta").textContent = meta || "";
-    document.getElementById("desc").textContent = desc || "";
-
-    // VIDEO
+    // ✅ VIDEO: YouTube desde vimeo_url (campo legacy)
     const videoWrap = document.getElementById("videoWrap");
-    const url = project?.vimeo_url || "";
-    renderYouTube(videoWrap, url);
+    renderYouTube(videoWrap, project?.vimeo_url || "");
 
-    // GALLERY
+    // ✅ GALLERY
     const gal = document.getElementById("gallery");
     const imgs = Array.isArray(project.gallery) ? project.gallery.filter(Boolean) : [];
-    if (imgs.length) {
-      gal.innerHTML = imgs
-        .map((u) => `<img src="${u}" loading="lazy" alt="" style="width:100%;height:100%;aspect-ratio:16/10;object-fit:cover;border-radius:18px;border:1px solid rgba(0,0,0,.12)"/>`)
-        .join("");
-    } else {
-      gal.innerHTML = "";
-    }
+    gal.innerHTML = imgs
+      .map(
+        (u) => `
+        <img src="${u}" loading="lazy" alt=""
+          style="width:100%;height:100%;aspect-ratio:16/10;object-fit:cover;border-radius:18px;border:1px solid rgba(0,0,0,.12)"/>
+      `
+      )
+      .join("");
   } catch (e) {
     console.error("Detail error:", e);
     container.innerHTML = `<div style="padding:18px;opacity:.7">Error loading project</div>`;
@@ -240,7 +234,7 @@ async function renderDetail(container, slug) {
 }
 
 /* ---------------------------
-   Router
+   Route
 --------------------------- */
 async function route() {
   const page = mountLayout();
