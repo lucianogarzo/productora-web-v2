@@ -1,51 +1,34 @@
-// js/sanity.js (ESTABLE)
+// js/sanity.js
+// Sanity client for public reads (GROQ over HTTP)
 
-export const SANITY_PROJECT_ID = "u233mkcr";
-export const SANITY_DATASET = "production";
-export const SANITY_API_VERSION = "2023-08-01";
+const PROJECT_ID = "u233mkcr";
+const DATASET = "production";
+const API_VERSION = "2023-08-01";
 
-const BASE = `https://${SANITY_PROJECT_ID}.api.sanity.io/v${SANITY_API_VERSION}/data/query/${SANITY_DATASET}`;
+const BASE_URL = `https://${PROJECT_ID}.api.sanity.io/v${API_VERSION}/data/query/${DATASET}`;
 
-async function sanityFetch(query, params = {}) {
-  const url = new URL(BASE);
+// Basic fetch helper
+export async function sanityFetch(query, params = {}) {
+  const url = new URL(BASE_URL);
   url.searchParams.set("query", query);
 
-  // Params must be JSON encoded so strings are quoted
-  for (const [k, v] of Object.entries(params)) {
-    url.searchParams.set(`$${k}`, JSON.stringify(v));
-  }
+  // Sanity expects params in $param style; we pass a JSON map via $params
+  url.searchParams.set("$params", JSON.stringify(params));
 
-  const res = await fetch(url.toString(), {
-    method: "GET",
-    headers: { Accept: "application/json" },
-  });
-
-  const data = await res.json();
-
+  const res = await fetch(url.toString(), { method: "GET" });
   if (!res.ok) {
-    throw new Error(data?.error?.description || `Sanity error ${res.status}`);
+    const txt = await res.text().catch(() => "");
+    throw new Error(`Sanity request failed (${res.status}): ${txt}`);
   }
 
-  return data.result;
+  const json = await res.json();
+  return json.result;
 }
 
+// --- Projects list ---
 export async function fetchProjects() {
   const query = `
     *[_type == "project"] | order(order asc, year desc) {
-      "slug": slug.current,
-      title_es, title_en,
-      client, year,
-      vimeo_url,
-      featured, order,
-      "thumbnail": thumbnail.asset->url
-    }
-  `;
-  return sanityFetch(query);
-}
-
-export async function fetchProjectBySlug(slug) {
-  const query = `
-    *[_type == "project" && slug.current == $slug][0]{
       "slug": slug.current,
       title_es, title_en,
       client, year,
@@ -55,5 +38,38 @@ export async function fetchProjectBySlug(slug) {
       "thumbnail": thumbnail.asset->url
     }
   `;
+  return sanityFetch(query);
+}
+
+// --- Single project by slug ---
+export async function fetchProjectBySlug(slug) {
+  const query = `
+    *[_type == "project" && slug.current == $slug][0]{
+      "slug": slug.current,
+      title_es, title_en,
+      client, year,
+      vimeo_url,
+      description_es, description_en,
+      featured, order,
+      "thumbnail": thumbnail.asset->url,
+      "gallery": gallery[].asset->url
+    }
+  `;
   return sanityFetch(query, { slug });
+}
+
+// --- Site Settings (Brands, etc.) ---
+export async function fetchSiteSettings() {
+  const query = `
+    *[_type == "siteSettings"][0]{
+      brandsTitle_es,
+      brandsTitle_en,
+      "brands": brands[]{
+        name,
+        url,
+        "logo": logo.asset->url
+      }
+    }
+  `;
+  return sanityFetch(query);
 }
