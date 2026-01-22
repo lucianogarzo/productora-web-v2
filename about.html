@@ -3,15 +3,15 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>About – Calabria</title>
+  <title>Acerca – Calabria</title>
   <link rel="stylesheet" href="/css/style.css"/>
 
   <meta name="description" content="Calabria. Productora audiovisual: dirección, producción y post." />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="About – Calabria" />
+  <meta property="og:title" content="Acerca – Calabria" />
   <meta property="og:description" content="Dirección, producción y post. Estética cinematográfica." />
-  <meta property="og:image" content="https://productora-web-v2.pages.dev/assets/og.jpg" />
-  <meta property="og:url" content="https://productora-web-v2.pages.dev/about.html" />
+  <meta property="og:image" content="https://www.bycalabria.com/assets/og.jpg" />
+  <meta property="og:url" content="https://www.bycalabria.com/about.html" />
   <meta name="twitter:card" content="summary_large_image" />
   <link rel="icon" href="/assets/favicon.png" />
   <link rel="canonical" href="https://www.bycalabria.com/about.html" />
@@ -34,7 +34,6 @@
       background: rgba(255,255,255,.03);
       overflow:hidden;
     }
-
     .panel-inner{ padding: 20px; }
 
     .kicker{
@@ -62,10 +61,10 @@
 
     .section-title{
       margin: 18px 0 10px;
-      font-size: 13px;
-      letter-spacing: .18em;
+      font-size: 12px;
+      letter-spacing: .22em;
       text-transform: uppercase;
-      color: rgba(255,255,255,.75);
+      color: rgba(255,255,255,.62);
     }
 
     .bullets{
@@ -75,14 +74,19 @@
       line-height: 1.6;
     }
 
+    /* ✅ Capsule black style (replaces grey blocks) */
+    .cap{
+      border: 1px solid rgba(0,0,0,.55);
+      border-radius: 16px;
+      background: #0a0a0a;
+      color: rgba(255,255,255,.9);
+      padding: 14px;
+    }
+
     .quote{
       margin-top: 18px;
-      padding: 14px 14px;
-      border-radius: 16px;
-      border: 1px solid var(--line);
-      background: rgba(0,0,0,.25);
-      color: rgba(255,255,255,.78);
       line-height: 1.55;
+      color: rgba(255,255,255,.78);
     }
 
     .mini-grid{
@@ -95,53 +99,56 @@
       .mini-grid{ grid-template-columns: 1fr; }
     }
 
+    /* right cards -> capsule black */
     .card2{
-      border: 1px solid var(--line);
+      border: 1px solid rgba(0,0,0,.55);
       border-radius: 16px;
-      background: rgba(0,0,0,.25);
+      background: #0a0a0a;
       padding: 14px;
     }
     .card2 .label{
       font-size: 12px;
       letter-spacing: .18em;
       text-transform: uppercase;
-      color: var(--muted2);
+      color: rgba(255,255,255,.62);
       margin-bottom: 8px;
     }
     .card2 .value{
-      color: rgba(255,255,255,.88);
+      color: rgba(255,255,255,.92);
       font-size: 14px;
       line-height: 1.45;
     }
 
+    /* buttons -> capsule black like Contact */
     .btnrow{
       display:flex;
       gap: 10px;
       flex-wrap: wrap;
       margin-top: 18px;
     }
-
     .btn{
       display:inline-flex;
       align-items:center;
       justify-content:center;
       gap:8px;
       padding: 10px 14px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.2);
-      background: rgba(255,255,255,.08);
-      color: var(--fg);
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.55);
+      background: #0a0a0a;
+      color: #fff;
       cursor:pointer;
       font-size: 14px;
-      opacity: .95;
+      opacity: .96;
       white-space: nowrap;
+      text-decoration:none;
+      transition: transform .22s ease, border-color .22s ease, opacity .22s ease;
     }
-    .btn:hover{ opacity:1; background: rgba(255,255,255,.12); }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,255,255,.22);
+      opacity: 1;
+    }
 
-    .btn.primary{
-      background: rgba(255,255,255,.18);
-      border-color: rgba(255,255,255,.28);
-    }
   </style>
 </head>
 
@@ -157,8 +164,11 @@
       <!-- LEFT -->
       <div class="panel">
         <div class="panel-inner">
-          <div class="kicker" id="kicker">About</div>
-          <h1 class="big-title display" id="title">Una productora chica. Una estética grande.</h1>
+          <div class="kicker" id="kicker">Acerca</div>
+
+          <h1 class="big-title display" id="title">
+            Una productora chica. Una estética grande.
+          </h1>
 
           <p class="lead" id="lead">
             Calabria es una productora audiovisual enfocada en una estética cinematográfica:
@@ -173,12 +183,13 @@
             <li>Entrega master + versiones para redes</li>
           </ul>
 
-          <div class="quote" id="quote">
+          <!-- ✅ quote in capsule black -->
+          <div class="cap quote" id="quote">
             “Menos ruido. Más intención. Cine aplicado a piezas cortas.”
           </div>
 
           <div class="btnrow">
-            <a class="btn primary" href="/projects/" id="btnProjects">Ver Projects</a>
+            <a class="btn" href="/projects/" id="btnProjects">Ver Proyectos</a>
             <a class="btn" href="/contact.html" id="btnContact">Contacto</a>
           </div>
         </div>
@@ -227,6 +238,8 @@
 
     const COPY = {
       es: {
+        kicker: "Acerca",
+        kicker2: "Studio",
         title: "Una productora chica. Una estética grande.",
         lead:
           "Calabria es una productora audiovisual enfocada en una estética cinematográfica: ritmo, puesta, luz y detalle. Trabajamos con marcas y artistas, desde la idea hasta el delivery final.",
@@ -238,7 +251,7 @@
           "Entrega master + versiones para redes"
         ],
         quote: "“Menos ruido. Más intención. Cine aplicado a piezas cortas.”",
-        btnProjects: "Ver Proyectos",
+        btnProjects: "Ver proyectos",
         btnContact: "Contacto",
         baseLabel: "Base",
         baseValue: "Buenos Aires, Argentina",
@@ -257,6 +270,8 @@
         ]
       },
       en: {
+        kicker: "About",
+        kicker2: "Studio",
         title: "A small studio. A big aesthetic.",
         lead:
           "Calabria is an audiovisual studio focused on cinematic aesthetics: rhythm, staging, light and detail. We work with brands and artists, from concept to final delivery.",
@@ -268,7 +283,7 @@
           "Master delivery + social cutdowns"
         ],
         quote: "“Less noise. More intention. Cinema applied to short formats.”",
-        btnProjects: "See Projects",
+        btnProjects: "See projects",
         btnContact: "Contact",
         baseLabel: "Base",
         baseValue: "Buenos Aires, Argentina",
@@ -288,19 +303,28 @@
       }
     };
 
-    const c = COPY[lang];
+    const c = COPY[lang] || COPY.es;
 
+    // kickers
+    document.getElementById("kicker").textContent = c.kicker;
+    document.getElementById("kicker2").textContent = c.kicker2;
+
+    // main copy
     document.getElementById("title").textContent = c.title;
     document.getElementById("lead").textContent = c.lead;
 
+    // services
     document.getElementById("servicesTitle").textContent = c.servicesTitle;
     document.getElementById("services").innerHTML = c.services.map(x => `<li>${x}</li>`).join("");
 
+    // quote
     document.getElementById("quote").textContent = c.quote;
 
+    // buttons
     document.getElementById("btnProjects").textContent = c.btnProjects;
     document.getElementById("btnContact").textContent = c.btnContact;
 
+    // right cards
     document.getElementById("baseLabel").textContent = c.baseLabel;
     document.getElementById("baseValue").textContent = c.baseValue;
     document.getElementById("modeLabel").textContent = c.modeLabel;
@@ -310,6 +334,7 @@
     document.getElementById("deliverLabel").textContent = c.deliverLabel;
     document.getElementById("deliverValue").textContent = c.deliverValue;
 
+    // how
     document.getElementById("howTitle").textContent = c.howTitle;
     document.getElementById("how").innerHTML = c.how.map(x => `<li>${x}</li>`).join("");
   </script>
