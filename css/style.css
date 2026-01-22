@@ -1,275 +1,221 @@
 @import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap");
 
-.kicker {
-  font-size: 12px;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: var(--muted2);
-}
-
+/* =====================
+   VARIABLES
+===================== */
 :root{
-  --bg:#000;
-  --fg:#fff;
-  --muted:rgba(255,255,255,.7);
-  --muted2:rgba(255,255,255,.45);
-  --card:#0b0b0b;
-  --line:rgba(255,255,255,.14);
+  --bg:#ffffff;
+  --fg:#0a0a0a;
+  --muted:rgba(10,10,10,.62);
+  --muted2:rgba(10,10,10,.45);
+  --line:rgba(10,10,10,.14);
   --radius:18px;
 }
-.display {
-  font-family: "Bebas Neue", ui-sans-serif;
-  letter-spacing: .02em;
-  text-transform: uppercase;
-}
 
+/* =====================
+   RESET / BASE
+===================== */
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
   margin:0;
   background:var(--bg);
   color:var(--fg);
-  font-family: "Inter", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
-}
+  font-family:"Inter", system-ui, -apple-system, BlinkMacSystemFont, Arial;
+  padding-top:72px; /* espacio nav fijo */
 }
 
-a{color:var(--fg);text-decoration:none;opacity:.92}
+body.home{
+  padding-top:0; /* en home el video va debajo del nav */
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+  opacity:.9;
+}
 a:hover{opacity:1}
 
-.container{max-width:1200px;margin:0 auto;padding:0 22px}
+/* =====================
+   TYPO
+===================== */
+.display{
+  font-family:"Bebas Neue", sans-serif;
+  letter-spacing:.02em;
+  text-transform:uppercase;
+}
 
-.nav{
-  position:sticky;top:0;z-index:50;
-  backdrop-filter: blur(14px);
-  background:rgba(0,0,0,.55);
+.h2{
+  margin:0 0 16px;
+  font-size:22px;
+}
+
+/* =====================
+   LAYOUT
+===================== */
+.container{
+  max-width:1200px;
+  margin:0 auto;
+  padding:0 22px;
+}
+
+.section{
+  padding:56px 0;
+}
+
+/* =====================
+   NAV
+===================== */
+header.nav{
+  position:fixed;
+  top:0; left:0; right:0;
+  z-index:9999;
+  height:72px;
+  display:flex;
+  align-items:center;
+  background:rgba(255,255,255,.92);
   border-bottom:1px solid var(--line);
+  backdrop-filter:blur(12px);
+  transition:background .25s ease, box-shadow .25s ease;
 }
-.nav-inner{
-  height:72px;display:flex;align-items:center;justify-content:space-between;
-}
-.brand{font-weight:600;letter-spacing:.2px}
-.menu{display:flex;gap:16px;align-items:center}
-.btn{
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.06);
-  padding:9px 11px;border-radius:12px;
-  color:var(--fg);cursor:pointer;
-}
-.btn:hover{background:rgba(255,255,255,.1)}
 
-.hero{
-  min-height:78vh;
-  display:flex;align-items:center;
+header.nav.is-solid{
+  background:rgba(255,255,255,.92);
+  box-shadow:0 10px 30px rgba(0,0,0,.04);
 }
-.hero-card{
+
+body.home header.nav{
+  background:transparent;
+  border-bottom:1px solid transparent;
+  box-shadow:none;
+}
+
+body.home header.nav.is-solid{
+  background:rgba(255,255,255,.92);
+  border-bottom:1px solid var(--line);
+  box-shadow:0 10px 30px rgba(0,0,0,.04);
+}
+
+.nav-inner{
   width:100%;
-  border:1px solid var(--line);
-  border-radius: var(--radius);
-  overflow:hidden;
-  background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
-.hero-media{
+
+.brand{
+  font-family:ui-serif, Georgia, "Times New Roman", serif;
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.nav-links{
+  display:flex;
+  gap:18px;
+  align-items:center;
+}
+
+.nav-links a,
+.nav-links button{
+  font-family:ui-serif, Georgia, "Times New Roman", serif;
+  font-size:12px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  background:none;
+  border:none;
+  cursor:pointer;
+  padding:0;
+}
+
+/* color nav */
+header.nav .brand,
+header.nav .nav-links a,
+header.nav .nav-links button{
+  color:#0a0a0a;
+}
+
+body.home header.nav:not(.is-solid) .brand,
+body.home header.nav:not(.is-solid) .nav-links a,
+body.home header.nav:not(.is-solid) .nav-links button{
+  color:#ffffff;
+}
+
+/* =====================
+   HERO / REEL
+===================== */
+.hero-wrap{
+  margin:0;
+}
+
+.hero-card{
   position:relative;
   width:100%;
-  padding-top:56.25%;
-  background:#050505;
+  height:calc(100vh - 72px);
+  min-height:560px;
+  overflow:hidden;
+  background:#000;
 }
-.hero-media .placeholder{
-  position:absolute;inset:0;
-  display:flex;align-items:center;justify-content:center;
-  color:var(--muted2);
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  font-size:12px;
-}
-.hero-copy{
-  padding:22px 22px 26px;
-}
-.h1{font-size:42px;line-height:1.05;margin:0 0 10px}
-.p{margin:0;color:var(--muted);max-width:70ch}
 
-.section{padding:56px 0}
-.h2{margin:0 0 16px;font-size:22px;letter-spacing:.2px}
+.reel{
+  position:absolute;
+  inset:0;
+}
+
+.reel video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* =====================
+   GRID / CARDS
+===================== */
 .grid{
   display:grid;
   gap:14px;
-  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  grid-template-columns:repeat(auto-fit, minmax(230px,1fr));
 }
-/* --- Cinematic cards --- */
+
 .card{
-  position: relative;
-  overflow: hidden;
-  border-radius: var(--radius);
-  border: 1px solid var(--line);
-  background: rgba(255,255,255,.02);
-  transform: translateZ(0);
+  position:relative;
+  overflow:hidden;
+  border-radius:var(--radius);
+  border:1px solid var(--line);
+  background:#fff;
 }
 
 .card img{
-  width: 100%;
-  height: 100%;
+  width:100%;
+  aspect-ratio:16/10;
+  object-fit:cover;
   display:block;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  transition: transform .6s cubic-bezier(.2,.8,.2,1), opacity .6s;
-  opacity: .92;
 }
 
 .card::after{
   content:"";
   position:absolute;
   inset:0;
-  background: linear-gradient(to top, rgba(0,0,0,.72), rgba(0,0,0,.08) 55%, rgba(0,0,0,0));
-  opacity: .9;
-  transition: opacity .6s;
-  pointer-events:none;
+  background:linear-gradient(to top, rgba(0,0,0,.55), rgba(0,0,0,0));
 }
 
-.card:hover img{
-  transform: scale(1.06);
-  opacity: 1;
-}
-
-.card:hover::after{
-  opacity: 1;
-}
-
-}
 .card .meta{
-  position:absolute;left:0;right:0;bottom:0;
-  padding:14px;
-  background:linear-gradient(to top, rgba(0,0,0,.85), rgba(0,0,0,0));
-}
-.card .meta h3{margin:0;font-size:16px}
-.card .meta p{margin:6px 0 0;color:var(--muted);font-size:13px}
-
-.footer{
-  border-top:1px solid var(--line);
-  padding:26px 0;
-  color:var(--muted2);
-  font-size:13px;
-
-  /* --- Film grain overlay (subtle) --- */
-body::before{
-  content:"";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: .07;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
-  background-size: 180px 180px;
-}
-
-  .card .meta{
-  position: absolute;
-  left: 14px;
-  right: 14px;
-  bottom: 14px;
-  z-index: 2;
-  transform: translateY(6px);
-  transition: transform .6s cubic-bezier(.2,.8,.2,1);
+  position:absolute;
+  left:14px;
+  right:14px;
+  bottom:14px;
+  color:#fff;
 }
 
 .card .meta h3{
   margin:0;
-  font-size: 18px;
-  line-height: 1.05;
-  font-weight: 600;
+  font-size:18px;
 }
 
 .card .meta p{
-  margin:8px 0 0;
-  color: rgba(255,255,255,.72);
-  font-size: 13px;
+  margin:6px 0 0;
+  font-size:13px;
+  opacity:.75;
 }
-
-.card:hover .meta{
-  transform: translateY(0);
-}
-
-}
-
-.kpi{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted2);font-size:13px}
-.kpi span{border:1px solid var(--line);border-radius:999px;padding:7px 10px;background:rgba(255,255,255,.05)}
-
-/* ===== NAV behavior ===== */
-header.nav{
-  position: fixed !important;
-  top: 0; left: 0; right: 0;
-  z-index: 9999;
-  transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
-}
-
-/* Default solid */
-header.nav{
-  background: rgba(255,255,255,.92) !important;
-  border-bottom: 1px solid rgba(10,10,10,.14) !important;
-  backdrop-filter: blur(12px);
-}
-
-/* Solid state (keeps same) */
-header.nav.is-solid{
-  background: rgba(255,255,255,.92) !important;
-  border-bottom: 1px solid rgba(10,10,10,.14) !important;
-  box-shadow: 0 10px 30px rgba(0,0,0,.04);
-}
-
-/* Home: transparent at top */
-body.home header.nav{
-  background: transparent !important;
-  border-bottom: 1px solid transparent !important;
-  box-shadow: none !important;
-  backdrop-filter: blur(0px);
-}
-
-/* Home: once scrolled, becomes solid */
-body.home header.nav.is-solid{
-  background: rgba(255,255,255,.92) !important;
-  border-bottom: 1px solid rgba(10,10,10,.14) !important;
-  box-shadow: 0 10px 30px rgba(0,0,0,.04);
-  backdrop-filter: blur(12px);
-}
-
-/* Default: pages need spacing for fixed nav */
-body{ padding-top: 72px; }
-
-/* Home: NO padding so hero video isn't cut */
-body.home{ padding-top: 0; }
-
-/* ===== PRO NAV COLORS ===== */
-
-/* default links color (solid nav) */
-header.nav .brand,
-header.nav .nav-links a,
-header.nav .nav-links button{
-  color: #0a0a0a;
-}
-
-/* HOME at top: transparent nav with WHITE text */
-body.home header.nav:not(.is-solid) .brand,
-body.home header.nav:not(.is-solid) .nav-links a,
-body.home header.nav:not(.is-solid) .nav-links button{
-  color: #ffffff;
-}
-
-/* nicer hover on video */
-body.home header.nav:not(.is-solid) .nav-links a:hover,
-body.home header.nav:not(.is-solid) .nav-links button:hover{
-  opacity: .85;
-}
-
-/* language button border matches mode */
-header.nav .lang{
-  border-color: rgba(10,10,10,.18) !important;
-}
-
-body.home header.nav:not(.is-solid) .lang{
-  border-color: rgba(255,255,255,.30) !important;
-}
-body.home header.nav:not(.is-solid){
-  background: linear-gradient(to bottom, rgba(0,0,0,.35), rgba(0,0,0,0)) !important;
-  border-bottom: 1px solid transparent !important;
-}
-
-
