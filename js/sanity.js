@@ -1,5 +1,5 @@
 // js/sanity.js
-// Sanity client for public reads (GROQ over HTTP)
+// Public read-only Sanity queries (no token)
 
 const PROJECT_ID = "u233mkcr";
 const DATASET = "production";
@@ -7,15 +7,30 @@ const API_VERSION = "2023-08-01";
 
 const BASE_URL = `https://${PROJECT_ID}.api.sanity.io/v${API_VERSION}/data/query/${DATASET}`;
 
-// Basic fetch helper
+/**
+ * Sanity expects params as individual querystring values:
+ * Example: &"$slug"="parense-de-manos-2025"
+ *
+ * This helper sets: query=<groq>&$slug="value"&$other=123
+ */
 export async function sanityFetch(query, params = {}) {
   const url = new URL(BASE_URL);
   url.searchParams.set("query", query);
 
-  // Sanity expects params in $param style; we pass a JSON map via $params
-  url.searchParams.set("$params", JSON.stringify(params));
+  // Add params as $paramName. Strings MUST be quoted.
+  for (const [key, value] of Object.entries(params)) {
+    const paramKey = `$${key}`;
 
-  const res = await fetch(url.toString(), { method: "GET" });
+    if (typeof value === "string") {
+      // quote strings
+      url.searchParams.set(paramKey, JSON.stringify(value));
+    } else {
+      // numbers/booleans/objects
+      url.searchParams.set(paramKey, JSON.stringify(value));
+    }
+  }
+
+  const res = await fetch(url.toString());
   if (!res.ok) {
     const txt = await res.text().catch(() => "");
     throw new Error(`Sanity request failed (${res.status}): ${txt}`);
@@ -28,7 +43,7 @@ export async function sanityFetch(query, params = {}) {
 // --- Projects list ---
 export async function fetchProjects() {
   const query = `
-    *[_type == "project"] | order(order asc, year desc) {
+    *[_type == "project"] | order(order asc, _createdAt desc) {
       "slug": slug.current,
       title_es, title_en,
       client, year,
@@ -58,7 +73,7 @@ export async function fetchProjectBySlug(slug) {
   return sanityFetch(query, { slug });
 }
 
-// --- Site Settings (Brands, etc.) ---
+// --- Site Settings ---
 export async function fetchSiteSettings() {
   const query = `
     *[_type == "siteSettings"][0]{
