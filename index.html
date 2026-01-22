@@ -4,8 +4,8 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <meta name="robots" content="index,follow" />
-
   <title>Calabria</title>
+
   <link rel="stylesheet" href="/css/style.css"/>
   <link rel="canonical" href="https://www.bycalabria.com/" />
 
@@ -20,112 +20,63 @@
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-
-  <!-- Favicon -->
   <link rel="icon" href="/assets/favicon.png" />
-
-  <style>
-    /* HOME specific */
-    .hero-wrap{
-      padding-top: 0;
-      padding-bottom: 0;
-    }
-
-    .hero-card{
-      position: relative;
-      border: 0;
-      border-radius: 0;
-      overflow: hidden;
-      background: #000;
-    }
-
-    /* FULLSCREEN REEL */
-    .reel{
-      position: relative;
-      width: 100%;
-      height: calc(100vh - 72px); /* nav height */
-      min-height: 560px;
-      background: #000;
-      overflow: hidden;
-    }
-
-    .reel video{
-      position:absolute;
-      inset:0;
-      width:100%;
-      height:100%;
-      object-fit: cover;
-      background:#000;
-    }
-
-    /* subtle cinematic vignette (optional, nice) */
-    .reel::after{
-      content:"";
-      position:absolute; inset:0;
-      background: radial-gradient(1200px 600px at 50% 40%, rgba(0,0,0,0) 0%, rgba(0,0,0,.25) 70%, rgba(0,0,0,.55) 100%);
-      pointer-events:none;
-    }
-
-    /* Featured section spacing (so it starts after hero) */
-    .section{
-      padding-top: 44px;
-      padding-bottom: 56px;
-    }
-
-    .sec-head{
-      display:flex;
-      justify-content: space-between;
-      align-items: baseline;
-      gap: 18px;
-    }
-
-    .see-all{
-      color: var(--muted);
-      font-size: 14px;
-    }
-  </style>
 </head>
 
 <body class="home">
-
   <script type="module">
     import { mountNav } from "/js/nav.js";
     mountNav();
   </script>
 
-  <main>
-    <!-- HERO -->
-    <section class="hero-wrap">
-      <div class="hero-card">
+  <!-- HERO FULLSCREEN -->
+  <section class="hero">
+    <div class="reel">
+      <!-- 👇 el reel SIEMPRE se muestra full -->
+      <video
+        class="reel-video"
+        src="/assets/reel.mp4"
+        autoplay
+        muted
+        playsinline
+        loop
+        preload="auto"
+      ></video>
+    </div>
+  </section>
 
-        <!-- ✅ FULLSCREEN REEL VIDEO -->
-        <div class="reel" id="reel">
-          <video
-            id="reelVideo"
-            autoplay
-            muted
-            loop
-            playsinline
-            preload="auto"
-            poster="/assets/og.jpg"
-          >
-            <source src="/assets/reel.mp4" type="video/mp4" />
-          </video>
-        </div>
-
-      </div>
-    </section>
-
-    <!-- FEATURED -->
-    <section class="section container">
+  <!-- FEATURED -->
+  <main class="container">
+    <section class="section">
       <div class="sec-head">
         <h2 class="h2" id="featuredTitle">Destacados</h2>
         <a class="see-all" href="/projects/" id="seeAll">Ver todo →</a>
       </div>
 
       <div style="height: 14px"></div>
-
       <div class="grid" id="featuredGrid"></div>
+    </section>
+
+    <!-- BRANDS BLOCK -->
+    <section class="brands">
+      <div class="brands-inner">
+        <h3 class="brands-title" id="brandsTitle">Marcas con las que trabajamos</h3>
+
+        <div class="brands-grid">
+          <!-- Reemplazá estos logos por los tuyos cuando los tengas -->
+          <img src="/assets/brands/brand-01.png" alt="Brand 1" loading="lazy">
+          <img src="/assets/brands/brand-02.png" alt="Brand 2" loading="lazy">
+          <img src="/assets/brands/brand-03.png" alt="Brand 3" loading="lazy">
+          <img src="/assets/brands/brand-04.png" alt="Brand 4" loading="lazy">
+          <img src="/assets/brands/brand-05.png" alt="Brand 5" loading="lazy">
+          <img src="/assets/brands/brand-06.png" alt="Brand 6" loading="lazy">
+          <img src="/assets/brands/brand-07.png" alt="Brand 7" loading="lazy">
+          <img src="/assets/brands/brand-08.png" alt="Brand 8" loading="lazy">
+          <img src="/assets/brands/brand-09.png" alt="Brand 9" loading="lazy">
+          <img src="/assets/brands/brand-10.png" alt="Brand 10" loading="lazy">
+          <img src="/assets/brands/brand-11.png" alt="Brand 11" loading="lazy">
+        </div>
+      </div>
     </section>
   </main>
 
@@ -139,40 +90,39 @@
       es: {
         featured: "Destacados",
         seeAll: "Ver todo →",
+        brands: "Marcas con las que trabajamos"
       },
       en: {
         featured: "Featured",
         seeAll: "See all →",
+        brands: "Brands we have teamed up with"
       }
     };
 
-    const c = COPY[lang];
-
+    const c = COPY[lang] || COPY.es;
     document.getElementById("featuredTitle").textContent = c.featured;
     document.getElementById("seeAll").textContent = c.seeAll;
+    document.getElementById("brandsTitle").textContent = c.brands;
 
     function titleFor(p){ return lang === "es" ? p.title_es : p.title_en; }
 
     const featuredGrid = document.getElementById("featuredGrid");
 
     (async () => {
-      try{
-        const projects = await fetchProjects();
-        const featured = projects.filter(p => p.featured).slice(0, 8);
+      const projects = await fetchProjects();
+      const featured = projects
+        .filter(p => p.featured)
+        .sort((a,b) => (a.order ?? 999) - (b.order ?? 999));
 
-        featuredGrid.innerHTML = featured.map(p => `
-          <a class="card" href="/projects/#/${encodeURIComponent(p.slug)}">
-            <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy"/>
-            <div class="meta">
-              <h3>${titleFor(p)}</h3>
-              <p>${[p.client, p.year].filter(Boolean).join(" • ")}</p>
-            </div>
-          </a>
-        `).join("");
-      } catch(e){
-        console.error(e);
-        featuredGrid.innerHTML = `<div style="opacity:.7;padding:14px;">Error cargando destacados</div>`;
-      }
+      featuredGrid.innerHTML = featured.slice(0, 12).map(p => `
+        <a class="card" href="/projects/#/${encodeURIComponent(p.slug)}">
+          <img src="${p.thumbnail || ""}" alt="${titleFor(p)}" loading="lazy"/>
+          <div class="meta">
+            <h3>${titleFor(p)}</h3>
+            <p>${[p.client, p.year].filter(Boolean).join(" • ")}</p>
+          </div>
+        </a>
+      `).join("");
     })();
   </script>
 </body>
