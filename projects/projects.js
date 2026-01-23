@@ -46,49 +46,72 @@ const COPY = {
     projectNotFound: "Project not found",
     errorProject: "Error loading project",
     videoNA: "Video not available",
-  }
+  },
 };
 
 /* ---------------------------
-   YouTube embed
+   Video embed helpers (YouTube only here)
 --------------------------- */
-function toYouTubeEmbed(url) {
+function parseYouTube(url) {
   if (!url) return null;
   const u = String(url).trim();
 
+  // vertical detection:
+  // - youtube shorts
+  // - or URL includes "vertical" anywhere (manual hint)
+  const isVertical = /youtube\.com\/shorts\//i.test(u) || /\bvertical\b/i.test(u);
+
   let id = null;
 
-  const m1 = u.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/);
+  const m1 = u.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/i);
   if (m1) id = m1[1];
 
-  const m2 = u.match(/[?&]v=([a-zA-Z0-9_-]{6,})/);
+  const m2 = u.match(/[?&]v=([a-zA-Z0-9_-]{6,})/i);
   if (m2) id = m2[1];
 
-  const m3 = u.match(/\/embed\/([a-zA-Z0-9_-]{6,})/);
+  const m3 = u.match(/\/embed\/([a-zA-Z0-9_-]{6,})/i);
   if (m3) id = m3[1];
 
-  const m4 = u.match(/\/shorts\/([a-zA-Z0-9_-]{6,})/);
+  const m4 = u.match(/\/shorts\/([a-zA-Z0-9_-]{6,})/i);
   if (m4) id = m4[1];
 
   if (!id) return null;
-  return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`;
+
+  return {
+    id,
+    isVertical,
+    embed: `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&playsinline=1`,
+  };
 }
 
 function renderYouTube(el, url, c) {
-  const embed = toYouTubeEmbed(url);
-  if (!embed) {
+  const yt = parseYouTube(url);
+
+  if (!yt) {
     el.innerHTML = `<div style="padding:16px;opacity:.7">${c.videoNA}</div>`;
     return;
   }
 
+  const ratio = yt.isVertical ? "9/16" : "16/9";
+  const extraWrapStyle = yt.isVertical
+    ? "max-height:80vh;margin:0 auto;"
+    : "";
+
   el.innerHTML = `
-    <div style="position:relative;width:100%;padding-top:56.25%;background:#000;border-radius:18px;overflow:hidden">
+    <div style="
+      width:100%;
+      background:#000;
+      border-radius:18px;
+      overflow:hidden;
+      aspect-ratio:${ratio};
+      ${extraWrapStyle}
+    ">
       <iframe
-        src="${embed}"
+        src="${yt.embed}"
         title="YouTube video"
         allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen
-        style="position:absolute;inset:0;width:100%;height:100%;border:0"
+        style="width:100%;height:100%;border:0;display:block"
       ></iframe>
     </div>
   `;
@@ -221,7 +244,9 @@ async function renderDetail(container, slug) {
     }
 
     document.getElementById("title").textContent = titleFor(project, lang);
-    document.getElementById("meta").textContent = [project.client, project.year].filter(Boolean).join(" • ");
+    document.getElementById("meta").textContent = [project.client, project.year]
+      .filter(Boolean)
+      .join(" • ");
     document.getElementById("desc").textContent = descFor(project, lang);
 
     renderYouTube(document.getElementById("videoWrap"), project?.vimeo_url || "", c);
