@@ -31,3 +31,252 @@
       a:hover {
         opacity: 1;
       }
+
+      .lang {
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        background: rgba(255, 255, 255, 0.06);
+        color: #fff;
+        padding: 8px 10px;
+        border-radius: 10px;
+        cursor: pointer;
+      }
+
+      .wrap {
+        padding: 0 24px 40px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .title {
+        font-size: 34px;
+        margin: 8px 0 10px;
+      }
+
+      .sub {
+        opacity: 0.75;
+        margin: 0 0 20px;
+      }
+
+      /* ✅ Video container (horizontal by default, vertical supported) */
+      .video {
+        width: 100%;
+        background: #111;
+        border-radius: 16px;
+        overflow: hidden;
+        position: relative;
+
+        /* default: horizontal */
+        aspect-ratio: 16 / 9;
+      }
+
+      /* Vertical mode */
+      .video.is-vertical {
+        aspect-ratio: 9 / 16;
+        max-height: 80vh; /* avoid being too tall */
+        margin: 0 auto; /* keep centered if narrower */
+      }
+
+      .video iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+      }
+
+      .desc {
+        margin-top: 22px;
+        opacity: 0.9;
+        line-height: 1.5;
+        white-space: pre-wrap;
+      }
+
+      .notfound {
+        padding: 24px;
+        opacity: 0.7;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <a href="/projects">← Projects</a>
+      <button class="lang" id="langBtn">ES</button>
+    </header>
+
+    <div class="wrap">
+      <h1 class="title" id="title"></h1>
+      <p class="sub" id="sub"></p>
+
+      <div class="video" id="video"></div>
+
+      <div class="desc" id="desc"></div>
+    </div>
+
+    <script type="module">
+      import { fetchProjectBySlug } from "../js/sanity.js";
+
+      const langBtn = document.getElementById("langBtn");
+      const videoEl = document.getElementById("video");
+
+      let lang = localStorage.getItem("lang") || "es";
+      langBtn.textContent = lang.toUpperCase();
+
+      langBtn.addEventListener("click", () => {
+        lang = lang === "es" ? "en" : "es";
+        localStorage.setItem("lang", lang);
+        langBtn.textContent = lang.toUpperCase();
+        render();
+      });
+
+      // ✅ Slug from URL: /projects/project.html?slug=<slug>
+      const params = new URLSearchParams(window.location.search);
+      const slug = params.get("slug");
+
+      let project = null;
+
+      function titleFor(p) {
+        return lang === "es" ? p.title_es : p.title_en;
+      }
+
+      function descFor(p) {
+        return lang === "es" ? p.description_es : p.description_en;
+      }
+
+      // --- Video parsing helpers (Vimeo / YouTube) ---
+
+      function parseVideo(url) {
+        if (!url) return null;
+        const raw = String(url).trim();
+
+        // Detect "vertical" intent:
+        // 1) YouTube Shorts URL
+        // 2) URL contains "vertical"
+        const isVerticalHint =
+          /youtube\.com\/shorts\//i.test(raw) || /\bvertical\b/i.test(raw);
+
+        // VIMEO: extract numeric ID
+        const vimeoMatch = raw.match(/\b(\d{6,12})\b/);
+        const looksLikeVimeo =
+          /vimeo\.com/i.test(raw) || /player\.vimeo\.com/i.test(raw);
+
+        if (looksLikeVimeo && vimeoMatch) {
+          return {
+            provider: "vimeo",
+            id: vimeoMatch[1],
+            isVertical: isVerticalHint,
+          };
+        }
+
+        // YOUTUBE: support
+        // - https://www.youtube.com/watch?v=XXXX
+        // - https://youtu.be/XXXX
+        // - https://www.youtube.com/shorts/XXXX
+        // - https://www.youtube.com/embed/XXXX
+        let ytId = null;
+
+        // shorts
+        let m = raw.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]{6,})/i);
+        if (m) ytId = m[1];
+
+        // watch?v=
+        if (!ytId) {
+          m = raw.match(/[?&]v=([a-zA-Z0-9_-]{6,})/i);
+          if (m) ytId = m[1];
+        }
+
+        // youtu.be/
+        if (!ytId) {
+          m = raw.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/i);
+          if (m) ytId = m[1];
+        }
+
+        // embed/
+        if (!ytId) {
+          m = raw.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]{6,})/i);
+          if (m) ytId = m[1];
+        }
+
+        if (ytId) {
+          return {
+            provider: "youtube",
+            id: ytId,
+            isVertical: isVerticalHint,
+          };
+        }
+
+        // If nothing matched:
+        return null;
+      }
+
+      function setVideoVertical(isVertical) {
+        videoEl.classList.toggle("is-vertical", !!isVertical);
+      }
+
+      function render() {
+        if (!project) return;
+
+        document.getElementById("title").textContent = titleFor(project);
+        document.getElementById("sub").textContent = [project.client, project.year]
+          .filter(Boolean)
+          .join(" • ");
+
+        document.getElementById("desc").textContent = descFor(project) || "";
+
+        const video = parseVideo(project.vimeo_url);
+
+        if (!video) {
+          setVideoVertical(false);
+          videoEl.innerHTML = `<div class="notfound">Video URL inválida (Vimeo o YouTube).</div>`;
+          return;
+        }
+
+        setVideoVertical(video.isVertical);
+
+        if (video.provider === "vimeo") {
+          videoEl.innerHTML = `
+            <iframe
+              src="https://player.vimeo.com/video/${video.id}?autoplay=0&muted=0&title=0&byline=0&portrait=0"
+              allow="autoplay; fullscreen; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          `;
+          return;
+        }
+
+        if (video.provider === "youtube") {
+          videoEl.innerHTML = `
+            <iframe
+              src="https://www.youtube.com/embed/${video.id}"
+              title="YouTube video player"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowfullscreen
+            ></iframe>
+          `;
+          return;
+        }
+      }
+
+      (async () => {
+        try {
+          project = await fetchProjectBySlug(slug);
+
+          if (!project) {
+            document.getElementById("title").textContent = "Project not found";
+            videoEl.innerHTML = `<div class="notfound">No se encontró el proyecto con slug: ${slug}</div>`;
+            return;
+          }
+
+          // nicer browser title
+          document.title = `${project.title_es || project.title_en} – Productora Web`;
+
+          render();
+        } catch (err) {
+          console.error(err);
+          document.getElementById("title").textContent = "Error";
+          videoEl.innerHTML = `<div class="notfound">Error cargando el proyecto (revisar CORS).</div>`;
+        }
+      })();
+    </script>
+  </body>
+</html>
